@@ -1,2 +1,1 @@
-# recipizer
-Optimize recipes and food consumption
+# :hamburger: :poultry_leg: :spaghetti: :curry: :ramen: :sushi:
