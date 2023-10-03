@@ -7,15 +7,14 @@ CREATE TABLE recipe (
     recipe_id INTEGER PRIMARY KEY,
     name TEXT NOT NULL UNIQUE,
     recipe_source_id INTEGER,
-    page INTEGER,
+    details TEXT,
     FOREIGN KEY (recipe_source_id)
         REFERENCES recipe_source (recipe_source_id)
 );
 
 CREATE TABLE ingredient (
     ingredient_id INTEGER PRIMARY KEY,
-    singular_name TEXT NOT NULL UNIQUE,
-    plural_name TEXT
+    name TEXT NOT NULL UNIQUE
 );
 
 CREATE TABLE inventory_ingredient (
@@ -39,3 +38,8 @@ CREATE TABLE recipe_ingredient (
     FOREIGN KEY (ingredient_id)
         REFERENCES ingredient (ingredient_id)
 );
+
+INSERT INTO
+    recipe_source (name)
+VALUES
+    ('Tasty. Healthy. Cheap.');

@@ -28,17 +28,9 @@ cd ../..
 sudo rm -r temp
 ```
 
-### Create DB and schema
+### Intialize database
 
 ```zsh
-sqlite3 recipizer.db
-
-sqlite> .read tables.sql
-sqlite> .read views.sql
-```
-
-### Seed
-
-```zsh
-sqlite> .read inserts.sql
+cd src/Recipizer.Cli
+dotnet run init recipizer.db ../sql/tables.sql ../../data/recipes.json
 ```
