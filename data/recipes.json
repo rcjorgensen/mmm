@@ -4,36 +4,53 @@
       "name": "Superior Avocado Toast",
       "details": "p. 32",
       "ingredients": [
-        "sourdough bread",
-        "olive oil",
-        "avocado",
-        "tomato",
-        "shallot",
-        "garlic",
-        "lime",
-        "dill",
-        "chives",
-        "tahini",
-        "salt",
-        "egg"
+        "Bread",
+        "Olive oil",
+        "Avocado",
+        "Tomato",
+        "Shallot",
+        "Garlic",
+        "Lime",
+        "Dill",
+        "Chives",
+        "Tahini",
+        "Salt",
+        "Egg"
       ]
     },
     {
       "name": "Peanut Butter Banana Baked Oats",
       "details": "p. 35",
       "ingredients": [
-        "banana",
-        "egg",
-        "plant-based milk",
-        "peanut butter",
-        "greek yogurt",
-        "honey",
-        "oat",
-        "ground cinnamon",
-        "baking powder",
-        "salt",
-        "walnut",
-        "dried cranberry"
+        "Banana",
+        "Egg",
+        "Plant-based milk",
+        "Peanut butter",
+        "Greek yogurt",
+        "Honey",
+        "Oat",
+        "Ground cinnamon",
+        "Baking powder",
+        "Salt",
+        "Walnut",
+        "Dried cranberry"
+      ]
+    },
+    {
+      "name": "Healthy(ish) Banana Pancakes",
+      "details": "p. 36",
+      "ingredients": [
+        "Banana",
+        "Egg",
+        "Milk",
+        "Greek yogurt",
+        "Vanilla extract",
+        "Flour",
+        "Dark brown sugar",
+        "Baking powder",
+        "Ground cinnamon",
+        "Salt",
+        "Butter"
       ]
     }
   ]
