@@ -1,5 +1,6 @@
 ﻿using System.Data.SQLite;
 using System.Text.Json;
+using System.Text.Json.Nodes;
 using Dapper;
 using Recipizer.Cli.Models;
 
@@ -28,12 +29,11 @@ if (command == "init")
 
     await connection.ExecuteAsync(schema);
 
-    var recipes = JsonSerializer
-        .Deserialize<RecipesJson>(
-            await File.ReadAllTextAsync(dataFile),
+    var recipes = JsonNode
+        .Parse(await File.ReadAllTextAsync(dataFile))
+        ?["recipes"].Deserialize<List<Recipe>>(
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
-        )
-        ?.Recipes;
+        );
 
     if (recipes == null)
     {
