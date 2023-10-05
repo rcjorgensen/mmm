@@ -95,9 +95,6 @@ else if (command == "list")
 {
     var subCommand = args[1];
 
-    // Get number of recipes and ingredients
-
-
     if (!File.Exists(dbFile))
     {
         Console.WriteLine("ERROR: Database file does not exist, run `init`");

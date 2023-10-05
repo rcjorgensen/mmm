@@ -52,6 +52,74 @@
         "Salt",
         "Butter"
       ]
+    },
+    {
+      "name": "Personal Power Smoothie",
+      "details": "p. 41",
+      "ingredients": [
+        "Banana",
+        "Ginger",
+        "Spinach",
+        "Frozen pineapple",
+        "Cashew",
+        "Coconut water",
+        "Mint"
+      ]
+    },
+    {
+      "name": "Swiss Bircher Muesli",
+      "details": "p. 44",
+      "ingredients": [
+        "Oat",
+        "Plant-based milk",
+        "Apple juice",
+        "Apple",
+        "Dried cranberry",
+        "Peanut butter",
+        "Greek yogurt",
+        "Honey",
+        "Almond flake",
+        "Ground cinnamon",
+        "Raspberry",
+        "Blueberry",
+        "Blackberry"
+      ]
+    },
+    {
+      "name": "Middle Eastern-Style Shakshuka",
+      "details": "p. 47",
+      "ingredients": [
+        "Olive oil",
+        "Onion",
+        "Red bell pepper",
+        "Green chile",
+        "Garlic",
+        "Cumin seed",
+        "Paprika",
+        "Chili powder",
+        "Salt",
+        "Canned tomato",
+        "Egg",
+        "Feta cheese",
+        "Parsley",
+        "Bread"
+      ]
+    },
+    {
+      "name": "Fully Loaded Omelet",
+      "details": "p. 48",
+      "ingredients": [
+        "Olive oil",
+        "Chorizo",
+        "Scallion",
+        "Mushroom",
+        "Egg",
+        "Salt",
+        "Gouda cheese",
+        "Avocado",
+        "Sour cream",
+        "Cilantro"
+      ]
     }
   ]
 }
