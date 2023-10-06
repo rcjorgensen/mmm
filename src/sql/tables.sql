@@ -39,6 +39,21 @@ CREATE TABLE recipe_ingredient (
         REFERENCES ingredient (ingredient_id)
 );
 
+CREATE TABLE label (
+    label_id INTEGER PRIMARY KEY,
+    label TEXT NOT NULL
+);
+
+CREATE TABLE ingredient_label (
+    ingredient_id INTEGER NOT NULL,
+    label_id INTEGER NOT NULL,
+    PRIMARY KEY (ingredient_id, label_id),
+    FOREIGN KEY (ingredient_id)
+        REFERENCES ingredient (ingredient_id),
+    FOREIGN KEY (label_id)
+        REFERENCES label (label_id)
+);
+
 INSERT INTO
     recipe_source (name)
 VALUES

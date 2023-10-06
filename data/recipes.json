@@ -120,6 +120,22 @@
         "Sour cream",
         "Cilantro"
       ]
+    },
+    {
+      "name": "Bacon, Avo, And Egg Breakfast Tacos",
+      "details": "p. 51",
+      "ingredients": [
+        "Avocado",
+        "Lime",
+        "Salt",
+        "Bacon",
+        "Butter",
+        "Egg",
+        "Greek yogurt",
+        "Tortilla",
+        "Red pepper flake",
+        "Cilantro"
+      ]
     }
   ]
 }

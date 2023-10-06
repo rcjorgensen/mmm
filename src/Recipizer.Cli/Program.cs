@@ -12,13 +12,21 @@ var dbFile = "recipizer.db";
 
 if (command == "init")
 {
-    var schemaFile = args[1];
-    var dataFile = args[2];
+    var schemaFile = "../sql/tables.sql"; // args[1];
+    var dataFile = "../../data/recipes.json"; // args[2];
+    var force = args.Contains("--force") || args.Contains("-f");
 
     if (File.Exists(dbFile))
     {
-        Console.WriteLine("ERROR: Database file already exists and would be overwritten");
-        return;
+        if (force)
+        {
+            File.Delete(dbFile);
+        }
+        else
+        {
+            Console.WriteLine("ERROR: Database file already exists and would be overwritten");
+            return;
+        }
     }
 
     File.Create(dbFile);
@@ -119,11 +127,17 @@ else if (command == "list")
             ingredients = await connection.QueryAsync<Ingredient>("SELECT * FROM ingredient");
         }
 
-        Console.WriteLine("Id|Name");
-        Console.WriteLine("-------");
+        Console.WriteLine("Id|Name|Labels");
+        Console.WriteLine("--------------");
         foreach (var ingredient in ingredients)
         {
-            Console.WriteLine($"{ingredient.IngredientId}|{ingredient.Name}");
+            var labels = await connection.QueryAsync<string>(
+                "SELECT l.label FROM label l JOIN ingredient_label il ON l.label_id = il.label_id WHERE il.ingredient_id = @ingredientId",
+                new { ingredientId = ingredient.IngredientId }
+            );
+            Console.WriteLine(
+                $"{ingredient.IngredientId}|{ingredient.Name}|{string.Join(',', labels)}"
+            );
         }
     }
     else if (subCommand == "inventory")
@@ -183,6 +197,49 @@ else if (command == "inventory")
             await connection.ExecuteAsync(
                 "DELETE FROM inventory_ingredient WHERE ingredient_id = @ingredientId",
                 new { ingredientId }
+            );
+        }
+    }
+}
+else if (command == "add")
+{
+    var subCommand = args[1];
+
+    if (!File.Exists(dbFile))
+    {
+        Console.WriteLine("ERROR: Database file does not exist, run `init`");
+        return;
+    }
+
+    using var connection = new SQLiteConnection($"Data Source={dbFile}");
+
+    if (subCommand == "label")
+    {
+        var label = args[3];
+
+        var labelIdQuery = "SELECT label_id FROM label WHERE label = @label";
+
+        var labelId = await connection.QuerySingleOrDefaultAsync<int?>(labelIdQuery, new { label });
+
+        if (labelId == null)
+        {
+            await connection.ExecuteAsync(
+                "INSERT INTO label (label) VALUES (@label)",
+                new { label }
+            );
+
+            labelId = await connection.QuerySingleAsync<int>(labelIdQuery, new { label });
+        }
+
+        // Create relationships
+
+
+        var ingredientIds = args[2].Split(',').Select(long.Parse);
+        foreach (var ingredientId in ingredientIds)
+        {
+            await connection.ExecuteAsync(
+                "INSERT INTO ingredient_label (ingredient_id, label_id) VALUES (@ingredientId, @labelId)",
+                new { ingredientId, labelId }
             );
         }
     }
