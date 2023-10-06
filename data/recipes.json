@@ -136,6 +136,27 @@
         "Red pepper flake",
         "Cilantro"
       ]
+    },
+    {
+      "name": "My Special Shakshuka",
+      "details": "p. 52",
+      "ingredients": [
+        "Olive oil",
+        "Onion",
+        "Garlic",
+        "Green chile",
+        "Cumin seed",
+        "Green bell pepper",
+        "Eggplant",
+        "Canned chickpea",
+        "Salt",
+        "Paprika",
+        "Ground tumeric",
+        "Canned tomato",
+        "Egg",
+        "Feta cheese",
+        "Parsley"
+      ]
     }
   ]
 }

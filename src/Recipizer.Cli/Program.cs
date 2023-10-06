@@ -39,7 +39,7 @@ if (command == "init")
 
     var recipes = JsonNode
         .Parse(await File.ReadAllTextAsync(dataFile))
-        ?["recipes"].Deserialize<List<Recipe>>(
+        ?["recipes"].Deserialize<List<RecipeJson>>(
             new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
         );
 
@@ -243,6 +243,78 @@ else if (command == "add")
             );
         }
     }
+}
+else if (command == "optimize")
+{
+    // Recipes with fewest ingredients -- optimizes for ease
+
+    var subCommand = args[1];
+
+    if (!File.Exists(dbFile))
+    {
+        Console.WriteLine("ERROR: Database file does not exist, run `init`");
+        return;
+    }
+
+    using var connection = new SQLiteConnection($"Data Source={dbFile}");
+
+    if (subCommand == "fewest-ingredients")
+    {
+        var rows = args.Length >= 3 ? int.Parse(args[2]) : 0;
+
+        IEnumerable<Recipe> recipes = (
+            from r in await connection.QueryAsync<Recipe, Ingredient, Recipe>(
+                """
+                SELECT r.recipe_id, r.name, r.details, i.ingredient_id, i.name FROM recipe r
+                JOIN recipe_ingredient ri ON r.recipe_id = ri.recipe_id
+                JOIN ingredient i ON ri.ingredient_id = i.ingredient_id
+                """,
+                (recipe, ingredient) =>
+                {
+                    recipe.Ingredients.Add(ingredient);
+                    return recipe;
+                },
+                splitOn: "ingredient_id"
+            )
+            group r by r.Name into g
+            select g.First() with
+            {
+                Ingredients = (from r in g from i in r.Ingredients select i).ToList()
+            }
+        ).OrderBy(r => r.Ingredients.Count());
+
+        if (rows > 0)
+        {
+            recipes = recipes.Take(rows);
+        }
+
+        foreach (var recipe in recipes)
+        {
+            Console.WriteLine("[Recipe]");
+            Console.WriteLine($"Id: {recipe.RecipeId}");
+            Console.WriteLine($"Name: {recipe.Name}");
+            Console.WriteLine($"Details: {recipe.Details}");
+            Console.WriteLine();
+            Console.WriteLine("[Ingredients]");
+            Console.WriteLine($"Count: {recipe.Ingredients.Count}");
+            Console.WriteLine("Id|Name");
+            Console.WriteLine("-------");
+            foreach (var ingredient in recipe.Ingredients)
+            {
+                Console.WriteLine($"{ingredient.IngredientId}|{ingredient.Name}");
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+    }
+
+    // Recipes with fewest missing ingredients -- optimizes for economy
+
+    // Recipes with most ingredients in stock -- optimizes for reducing food waste
+
+    // Most used ingredients -- optimizes for diversity
+
+    // Recipes with widely used ingredients -- optimizes for reuse
 }
 else
 {
