@@ -118,25 +118,45 @@ else if (command == "list")
         {
             var nameFilter = args[2].ToLower();
             ingredients = await connection.QueryAsync<Ingredient>(
-                "SELECT * FROM ingredient WHERE LOWER(name) LIKE @nameFilter",
+                """
+                SELECT
+                    i.ingredient_id, 
+                    i.name
+                FROM ingredient i
+                WHERE LOWER(i.name) LIKE @nameFilter
+                """,
                 new { nameFilter }
             );
         }
         else
         {
-            ingredients = await connection.QueryAsync<Ingredient>("SELECT * FROM ingredient");
+            ingredients = await connection.QueryAsync<Ingredient>(
+                """
+                SELECT
+                    i.ingredient_id,
+                    i.name
+                FROM ingredient i
+                """
+            );
         }
 
-        Console.WriteLine("Id|Name|Labels");
-        Console.WriteLine("--------------");
+        Console.WriteLine("Id|Name|InStock|Labels");
+        Console.WriteLine("----------------------");
         foreach (var ingredient in ingredients)
         {
             var labels = await connection.QueryAsync<string>(
-                "SELECT l.label FROM label l JOIN ingredient_label il ON l.label_id = il.label_id WHERE il.ingredient_id = @ingredientId",
+                """
+                SELECT 
+                    l.label 
+                FROM label l
+                    JOIN ingredient_label il
+                        ON l.label_id = il.label_id
+                WHERE il.ingredient_id = @ingredientId
+                """,
                 new { ingredientId = ingredient.IngredientId }
             );
             Console.WriteLine(
-                $"{ingredient.IngredientId}|{ingredient.Name}|{string.Join(',', labels)}"
+                $"{ingredient.IngredientId}|{ingredient.Name}|{ingredient.InStock}|{string.Join(',', labels)}"
             );
         }
     }
@@ -156,7 +176,11 @@ else if (command == "list")
     else if (subCommand == "missing")
     {
         var ingredients = await connection.QueryAsync<Ingredient>(
-            "SELECT * FROM ingredient WHERE ingredient_id NOT IN (SELECT ingredient_id FROM inventory_ingredient)"
+            """
+            SELECT i.ingredient_id, i.name 
+            FROM ingredient i
+            WHERE i.ingredient_id NOT IN (SELECT ingredient_id FROM inventory_ingredient)
+            """
         );
 
         Console.WriteLine("Id|Name");
@@ -246,8 +270,6 @@ else if (command == "add")
 }
 else if (command == "optimize")
 {
-    // Recipes with fewest ingredients -- optimizes for ease
-
     var subCommand = args[1];
 
     if (!File.Exists(dbFile))
@@ -258,30 +280,41 @@ else if (command == "optimize")
 
     using var connection = new SQLiteConnection($"Data Source={dbFile}");
 
-    if (subCommand == "fewest-ingredients")
+    // Recipes with fewest ingredients -- optimizes for ease
+
+
+    if (subCommand == "fewest")
     {
         var rows = args.Length >= 3 ? int.Parse(args[2]) : 0;
 
         IEnumerable<Recipe> recipes = (
             from r in await connection.QueryAsync<Recipe, Ingredient, Recipe>(
                 """
-                SELECT r.recipe_id, r.name, r.details, i.ingredient_id, i.name FROM recipe r
-                JOIN recipe_ingredient ri ON r.recipe_id = ri.recipe_id
-                JOIN ingredient i ON ri.ingredient_id = i.ingredient_id
+                SELECT
+                    r.recipe_id,
+                    r.name, 
+                    r.details,
+                    i.ingredient_id,
+                    i.name,
+                    EXISTS (SELECT * FROM inventory_ingredient ii WHERE ii.ingredient_id = i.ingredient_id) AS in_stock
+                FROM recipe r
+                    JOIN recipe_ingredient ri
+                        ON r.recipe_id = ri.recipe_id
+                    JOIN ingredient i
+                        ON ri.ingredient_id = i.ingredient_id
                 """,
                 (recipe, ingredient) =>
                 {
-                    recipe.Ingredients.Add(ingredient);
-                    return recipe;
+                    return recipe with { Ingredients = new List<Ingredient> { ingredient } };
                 },
                 splitOn: "ingredient_id"
             )
             group r by r.Name into g
             select g.First() with
             {
-                Ingredients = (from r in g from i in r.Ingredients select i).ToList()
+                Ingredients = (from r in g from i in r.Ingredients! select i).ToList()
             }
-        ).OrderBy(r => r.Ingredients.Count());
+        ).OrderBy(r => r.Ingredients!.Count());
 
         if (rows > 0)
         {
@@ -296,12 +329,15 @@ else if (command == "optimize")
             Console.WriteLine($"Details: {recipe.Details}");
             Console.WriteLine();
             Console.WriteLine("[Ingredients]");
-            Console.WriteLine($"Count: {recipe.Ingredients.Count}");
-            Console.WriteLine("Id|Name");
-            Console.WriteLine("-------");
+            Console.WriteLine($"Total: {recipe.Ingredients!.Count}");
+            Console.WriteLine($"Missing: {recipe.Ingredients!.Where(i => !i.InStock).Count()}");
+            Console.WriteLine("Id|Name|InStock");
+            Console.WriteLine("---------------");
             foreach (var ingredient in recipe.Ingredients)
             {
-                Console.WriteLine($"{ingredient.IngredientId}|{ingredient.Name}");
+                Console.WriteLine(
+                    $"{ingredient.IngredientId}|{ingredient.Name}|{ingredient.InStock}"
+                );
             }
             Console.WriteLine();
             Console.WriteLine();
@@ -309,6 +345,69 @@ else if (command == "optimize")
     }
 
     // Recipes with fewest missing ingredients -- optimizes for economy
+
+
+    if (subCommand == "fewest-missing")
+    {
+        var rows = args.Length >= 3 ? int.Parse(args[2]) : 0;
+
+        IEnumerable<Recipe> recipes = (
+            from r in await connection.QueryAsync<Recipe, Ingredient, Recipe>(
+                """
+                SELECT
+                    r.recipe_id,
+                    r.name, 
+                    r.details, 
+                    i.ingredient_id, 
+                    i.name, 
+                    EXISTS (SELECT * FROM inventory_ingredient ii WHERE ii.ingredient_id = i.ingredient_id) AS in_stock
+                FROM recipe r
+                    JOIN recipe_ingredient ri 
+                        ON r.recipe_id = ri.recipe_id
+                    JOIN ingredient i 
+                        ON ri.ingredient_id = i.ingredient_id
+                """,
+                (recipe, ingredient) =>
+                {
+                    return recipe with { Ingredients = new List<Ingredient> { ingredient } };
+                },
+                splitOn: "ingredient_id"
+            )
+            group r by r.Name into g
+            select g.First() with
+            {
+                Ingredients = (from r in g from i in r.Ingredients! select i).ToList()
+            }
+        ).OrderBy(r => r.Ingredients!.Where(i => !i.InStock).Count());
+
+        if (rows > 0)
+        {
+            recipes = recipes.Take(rows);
+        }
+
+        foreach (var recipe in recipes)
+        {
+            var ingredients = recipe.Ingredients!.OrderBy(i => i.InStock);
+            Console.WriteLine("[Recipe]");
+            Console.WriteLine($"Id: {recipe.RecipeId}");
+            Console.WriteLine($"Name: {recipe.Name}");
+            Console.WriteLine($"Details: {recipe.Details}");
+            Console.WriteLine();
+            Console.WriteLine("[Ingredients]");
+            Console.WriteLine($"Total: {recipe.Ingredients!.Count}");
+            Console.WriteLine($"Missing: {recipe.Ingredients!.Where(i => !i.InStock).Count()}");
+            Console.WriteLine("Id|Name|InStock");
+            Console.WriteLine("---------------");
+            foreach (var ingredient in ingredients)
+            {
+                Console.WriteLine(
+                    $"{ingredient.IngredientId}|{ingredient.Name}|{ingredient.InStock}"
+                );
+            }
+            Console.WriteLine();
+            Console.WriteLine();
+        }
+    }
 
     // Recipes with most ingredients in stock -- optimizes for reducing food waste
 

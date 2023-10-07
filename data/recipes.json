@@ -157,6 +157,43 @@
         "Feta cheese",
         "Parsley"
       ]
+    },
+    {
+      "name": "My Triple-Decker Chicken Sandwich",
+      "details": "p. 56",
+      "ingredients": [
+        "Chicken",
+        "Salt",
+        "Black pepper",
+        "Lemon",
+        "Olive oil",
+        "Bread",
+        "Tomato",
+        "Arugula",
+        "Greek yogurt",
+        "Tahini",
+        "Garlic",
+        "Dill"
+      ]
+    },
+    {
+      "name": "Healthy Buffalo Chicken Pita",
+      "details": "p. 59",
+      "ingredients": [
+        "Chicken",
+        "Paprika",
+        "Garlic powder",
+        "Salt",
+        "Black pepper",
+        "Olive oil",
+        "Greek yogurt",
+        "Hot sauce",
+        "Honey",
+        "Scallion",
+        "Cilantro",
+        "Pita bread",
+        "Gouda cheese"
+      ]
     }
   ]
 }

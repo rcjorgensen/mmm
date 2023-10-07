@@ -1,4 +1,12 @@
-select i.name as ingredient from recipe r
-join recipe_ingredient ri on r.recipe_id = ri.recipe_id
-join ingredient i on ri.ingredient_id = i.ingredient_id
-where r.name = 'Superior Avocado Toast';
+SELECT 
+    r.recipe_id, 
+    r.name, 
+    r.details, 
+    i.ingredient_id, 
+    i.name, 
+    EXISTS (SELECT * FROM inventory_ingredient ii WHERE ii.ingredient_id = i.ingredient_id) AS in_inventory
+FROM recipe r
+    JOIN recipe_ingredient ri 
+        ON r.recipe_id = ri.recipe_id
+    JOIN ingredient i 
+        ON ri.ingredient_id = i.ingredient_id
