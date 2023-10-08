@@ -13,92 +13,43 @@ sudo apt update
 sudo apt install build-essential
 ```
 
-### Install SQLite from source
+### Install sqlite3
 
 ```zsh
-mkdir temp
-cd temp
-wget https://www.sqlite.org/2023/sqlite-autoconf-3430100.tar.gz
-tar xvfz sqlite-autoconf-3430100.tar.gz
-cd sqlite-autoconf-3430100
-./configure
-sudo make
-sudo make install
-cd ../..
-sudo rm -r temp
+sudo apt-get install sqlite3
 ```
 
 ### Intialize database
 
 ```zsh
 cd src/Recipizer.Cli
-dotnet run init recipizer.db ../sql/tables.sql ../../data/recipes.json
+dotnet run -- init [--force]
+```
+
+### List recipes
+
+```zsh
+cd src/Recipizer.Cli
+dotnet run -- recipes --list --match %Banana%
+
+┌────┬─────────────────────────────────┬─────────┐
+│ Id │ Name                            │ Details │
+├────┼─────────────────────────────────┼─────────┤
+│  2 │ Peanut Butter Banana Baked Oats │ p. 35   │
+│  3 │ Healthy(ish) Banana Pancakes    │ p. 36   │
+└────┴─────────────────────────────────┴─────────┘
 ```
 
 ### List ingredients
 
 ```zsh
 cd src/Recipizer.Cli
-dotnet run list ingredients
-```
+dotnet run -- ingredients --list --match %Egg%
 
-Or with filter:
-
-```zsh
-cd src/Recipizer.Cli
-dotnet run list ingredients %Brown%
-
-# Id|Name
-# -------
-# 26|Dark brown sugar
-```
-
-### Add ingredient to inventory
-
-```zsh
-cd src/Recipizer.Cli
-dotnet run list ingredients %salt% # first get ID
-
-# Id|Name
-# -------
-# 11|Salt
-
-dotnet run inventory add 11
-```
-
-Or add multiple:
-
-```zsh
-dotnet run inventory add 11,12,27
-```
-
-### List ingredients in inventory
-
-```zsh
-cd src/Recipizer.Cli
-dotnet run list inventory
-
-# Id|Name|Added
-# -------------
-# 11|Salt|2023-10-05
-# 12|Egg|2023-10-04
-```
-
-### Remove ingredient from inventory
-
-```zsh
-cd src/Recipizer.Cli
-dotnet run list ingredients %salt% # first get ID
-
-# Id|Name
-# -------
-# 11|Salt
-
-dotnet run inventory remove 11
-```
-
-Or remove multiple:
-
-```zsh
-dotnet run inventory remove 11,12,27
+┌────┬──────────┐
+│ Id │ Name     │
+├────┼──────────┤
+│ 12 │ Egg      │
+│ 59 │ Eggplant │
+└────┴──────────┘
 ```
