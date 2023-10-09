@@ -1,6 +1,6 @@
 # :hamburger: :poultry_leg: :spaghetti: :curry: :ramen: :sushi:
 
-SQLite database with recipes, ingredients and more
+.NET CLI on top of an SQLite database with recipes, ingredients and more
 
 # Getting started
 
@@ -243,6 +243,6 @@ dotnet run -- ingredients --inventory
 
 # Roadmap
 
-* Add more recipes
-* Prioritize recipes with perishable ingredients in inventory
-* List ingredients with recipes where they are used and order by most used
+- Add more recipes
+- Prioritize recipes with perishable ingredients in inventory
+- List ingredients with recipes where they are used and order by most used
