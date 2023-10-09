@@ -6,13 +6,6 @@
 
 ## Ubuntu
 
-### Install build-essentials
-
-```zsh
-sudo apt update
-sudo apt install build-essential
-```
-
 ### Install sqlite3
 
 ```zsh
