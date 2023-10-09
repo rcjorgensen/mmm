@@ -8,27 +8,24 @@ internal sealed class IngredientsOptions
     [Option('l', "list", SetName = "list")]
     public bool List { get; set; }
 
-    [Option("missing", SetName = "list")]
+    [Option("missing", SetName = "missing")]
     public bool Missing { get; set; }
 
-    [Option('m', "match", SetName = "list")]
+    [Option("inventory", SetName = "inventory")]
+    public bool Inventory { get; set; }
+
+    [Option('m', "match")]
     public string? Match { get; set; }
 
     [Option('a', "add", SetName = "add")]
     public bool Add { get; set; }
 
-    [Option("name", SetName = "add")]
-    public required string Name { get; set; }
+    [Option('i', "to-inventory", SetName = "add")]
+    public IEnumerable<long> ToInventory { get; set; } = new List<long>();
 
     [Option('r', "remove", SetName = "remove")]
     public bool Remove { get; set; }
 
-    [Option("id", SetName = "remove")]
-    public long Id { get; set; }
-
-    [Option("add-to-recipe", SetName = "add-to-recipe")]
-    public bool AddToRecipe { get; set; }
-
-    [Option("recipe-id", SetName = "add-to-recipe")]
-    public long RecipeId { get; set; }
+    [Option('o', "from-inventory", SetName = "remove")]
+    public IEnumerable<long> FromInventory { get; set; } = new List<long>();
 }

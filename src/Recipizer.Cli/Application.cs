@@ -91,7 +91,7 @@ internal sealed class Application
         return "SUCCESS: Database initialized";
     }
 
-    internal async Task<string> Recipes(RecipesOptions opts)
+    internal async Task<string> Recipes(RecipesOptions options)
     {
         var databaseFilePath = configuration.DatabaseFilePath;
         if (databaseFilePath == null)
@@ -104,15 +104,20 @@ internal sealed class Application
             return "ERROR: Database file does not exist, run `init`";
         }
 
-        if (opts.List)
+        if (options.List)
         {
-            return serializer.SerializeRecipes(await repository.GetRecipes(opts.Match));
+            // if (opts.WithIngredients)
+            // {
+            //     return serializer.SerializeRecipesWithIngredients(await repository.GetRecipesWithIngredients(opts.Match));
+            // }
+
+            return serializer.SerializeRecipes(await repository.GetRecipes(options.Match));
         }
 
-        if (opts.Add)
+        if (options.Add)
         {
-            var name = opts.Name;
-            var details = opts.Details;
+            var name = options.Name;
+            var details = options.Details;
 
             var id = await repository.CreateRecipe(name, details);
 
@@ -123,16 +128,16 @@ internal sealed class Application
             return serializer.SerializeRecipes(recipes);
         }
 
-        if (opts.Remove)
+        if (options.Remove)
         {
-            var id = opts.Id;
+            var id = options.Id;
 
             await repository.DeleteRecipe(id);
 
             return serializer.SerializeRecipes(await repository.GetRecipes());
         }
 
-        return string.Empty;
+        return serializer.SerializeRecipes(await repository.GetRecipes(options.Match));
     }
 
     internal async Task<string> Ingredients(IngredientsOptions options)
@@ -150,7 +155,9 @@ internal sealed class Application
 
         if (options.List)
         {
-            return serializer.SerializeIngredients(await repository.GetIngredients(options.Match));
+            return serializer.SerializeIngredientsWithAdded(
+                await repository.GetIngredients(options.Match)
+            );
         }
 
         if (options.Missing)
@@ -158,51 +165,48 @@ internal sealed class Application
             return serializer.SerializeIngredients(await repository.GetMissing(options.Match));
         }
 
-        return string.Empty;
-    }
-
-    internal async Task<string> Inventory(InventoryOptions options)
-    {
-        var databaseFilePath = configuration.DatabaseFilePath;
-        if (databaseFilePath == null)
+        if (options.Inventory)
         {
-            return "ERROR: Could not get database file from configuration";
-        }
-
-        if (!fileSystem.Exists(databaseFilePath))
-        {
-            return "ERROR: Database file does not exist, run `init`";
-        }
-
-        if (options.List)
-        {
-            return serializer.SerializeInventory(await repository.GetInventory(options.Match));
-        }
-
-        if (options.Add)
-        {
-            var ingredientId = options.IngredientId;
-
-            await repository.CreateInventoryIngredient(ingredientId);
-
-            var inventory = await repository.GetInventory();
-            var ingredient = (
-                from x in inventory
-                where x.IngredientId == ingredientId
-                select x
-            ).Single();
-            ingredient.Name += "*";
-
-            return serializer.SerializeInventory(inventory);
+            return serializer.SerializeIngredientsWithAdded(
+                await repository.GetInventory(options.Match)
+            );
         }
 
         if (options.Remove)
         {
-            await repository.DeleteInventoryIngredient(options.IngredientId);
+            foreach (var ingredientId in options.FromInventory)
+            {
+                await repository.DeleteInventoryIngredient(ingredientId);
+            }
 
-            return serializer.SerializeInventory(await repository.GetInventory());
+            return serializer.SerializeIngredientsWithAdded(await repository.GetInventory());
         }
 
-        return string.Empty;
+        if (options.Add)
+        {
+            var ingredientIds = options.ToInventory;
+
+            foreach (var ingredientId in ingredientIds)
+            {
+                await repository.CreateInventoryIngredient(ingredientId);
+            }
+
+            var inventory = await repository.GetInventory();
+            var newIngredients = (
+                from x in inventory
+                join y in ingredientIds on x.IngredientId equals y
+                select x
+            );
+            foreach (var newIngredient in newIngredients)
+            {
+                newIngredient.Name += "*";
+            }
+
+            return serializer.SerializeIngredientsWithAdded(inventory);
+        }
+
+        return serializer.SerializeIngredientsWithAdded(
+            await repository.GetIngredients(options.Match)
+        );
     }
 }

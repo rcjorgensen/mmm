@@ -107,7 +107,7 @@ internal sealed class Serializer
         return sb.ToString();
     }
 
-    internal string SerializeInventory(IEnumerable<InventoryListModel> inventory)
+    internal string SerializeIngredientsWithAdded(IEnumerable<IngredientListModel> inventory)
     {
         inventory = inventory.ToList();
 

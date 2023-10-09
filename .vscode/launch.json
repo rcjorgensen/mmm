@@ -11,7 +11,7 @@
             "preLaunchTask": "build",
             // If you have changed target frameworks, make sure to update the program path.
             "program": "${workspaceFolder}/src/Recipizer.Cli/bin/Debug/net7.0/Recipizer.Cli.dll",
-            "args": ["ingredients", "--list"],
+            "args": ["ingredients", "-r", "64", "65"],
             "cwd": "${workspaceFolder}/src/Recipizer.Cli",
             // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
             "console": "internalConsole",

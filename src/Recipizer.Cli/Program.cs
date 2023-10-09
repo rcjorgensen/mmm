@@ -58,16 +58,17 @@ var app = new Application(
 
 
 var result = await Parser.Default
-    .ParseArguments<InitOptions, RecipesOptions, IngredientsOptions, InventoryOptions>(args)
+    .ParseArguments<InitOptions, RecipesOptions, IngredientsOptions>(args)
     .MapResult(
         (InitOptions opts) => app.Init(opts),
         (RecipesOptions opts) => app.Recipes(opts),
         (IngredientsOptions opts) => app.Ingredients(opts),
-        (InventoryOptions opts) => app.Inventory(opts),
-        errs => Task.FromResult("ERROR: Could not parse command line arguments")
+        errs => Task.FromResult(string.Empty)
     );
 
 // Presenting result
 
-
-Console.WriteLine(result);
+if (!string.IsNullOrWhiteSpace(result))
+{
+    Console.WriteLine(result);
+}

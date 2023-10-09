@@ -142,9 +142,12 @@ internal sealed class Repository
                 """
                 SELECT
                     i.ingredient_id,
-                    i.name
+                    i.name,
+                    ii.added
                 FROM ingredient i
+                LEFT JOIN inventory_ingredient ii ON i.ingredient_id = ii.ingredient_id
                 WHERE LOWER (i.name) LIKE @match
+                ORDER BY ii.added, i.ingredient_id
                 """,
                 new { match }
             )
@@ -152,16 +155,19 @@ internal sealed class Repository
                 """
                 SELECT
                     i.ingredient_id,
-                    i.name
+                    i.name,
+                    ii.added
                 FROM ingredient i
+                LEFT JOIN inventory_ingredient ii ON i.ingredient_id = ii.ingredient_id
+                ORDER BY ii.added, i.ingredient_id
                 """
             );
     }
 
-    internal Task<IEnumerable<InventoryListModel>> GetInventory(string? match = null)
+    internal Task<IEnumerable<IngredientListModel>> GetInventory(string? match = null)
     {
         return match != null
-            ? connection.QueryAsync<InventoryListModel>(
+            ? connection.QueryAsync<IngredientListModel>(
                 """
                 SELECT
                     i.ingredient_id,
@@ -170,10 +176,11 @@ internal sealed class Repository
                 FROM ingredient i
                 JOIN inventory_ingredient ii ON i.ingredient_id = ii.ingredient_id
                 WHERE LOWER (i.name) LIKE @match
+                ORDER BY ii.added, i.ingredient_id
                 """,
                 new { match }
             )
-            : connection.QueryAsync<InventoryListModel>(
+            : connection.QueryAsync<IngredientListModel>(
                 """
                 SELECT
                     i.ingredient_id,
@@ -181,6 +188,7 @@ internal sealed class Repository
                     ii.added
                 FROM ingredient i
                 JOIN inventory_ingredient ii ON i.ingredient_id = ii.ingredient_id
+                ORDER BY ii.added, i.ingredient_id
                 """
             );
     }
@@ -196,6 +204,7 @@ internal sealed class Repository
                 FROM ingredient i
                 WHERE NOT EXISTS (SELECT * FROM inventory_ingredient ii WHERE ii.ingredient_id = i.ingredient_id)
                 AND LOWER (i.name) LIKE @match
+                ORDER BY i.ingredient_id
                 """,
                 new { match }
             )
@@ -206,6 +215,7 @@ internal sealed class Repository
                     i.name
                 FROM ingredient i
                 WHERE NOT EXISTS (SELECT * FROM inventory_ingredient ii WHERE ii.ingredient_id = i.ingredient_id)
+                ORDER BY i.ingredient_id
                 """
             );
     }
