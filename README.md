@@ -97,6 +97,7 @@ dotnet run -- ingredients --add --to-inventory 40 47 55
 #### Remove ingredients from inventory
 
 ```zsh
+cd src/Recipizer.Cli
 dotnet run -- ingredients --remove --from-inventory 40 47 55
 
 ┌────┬──────────────────┬────────────┐
@@ -113,6 +114,7 @@ dotnet run -- ingredients --remove --from-inventory 40 47 55
 #### List ingredients in inventory
 
 ```zsh
+cd src/Recipizer.Cli
 dotnet run -- ingredients --inventory
 
 ┌────┬──────────────────┬────────────┐

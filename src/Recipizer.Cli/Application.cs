@@ -1,3 +1,4 @@
+using Recipizer.Cli.Models;
 using Recipizer.Cli.Options;
 
 namespace Recipizer.Cli;
@@ -106,10 +107,28 @@ internal sealed class Application
 
         if (options.List)
         {
-            // if (opts.WithIngredients)
-            // {
-            //     return serializer.SerializeRecipesWithIngredients(await repository.GetRecipesWithIngredients(opts.Match));
-            // }
+            if (options.WithIngredients)
+            {
+                return serializer.SerializeRecipesWithIngredients(
+                    await repository.GetRecipesWithIngredients(options.Match)
+                );
+            }
+
+            if (options.WithMissingIngredients)
+            {
+                return serializer.SerializeRecipesWithIngredients(
+                    await repository.GetRecipesWithIngredients(options.Match),
+                    IngredientList.Missing
+                );
+            }
+
+            if (options.WithInventoryIngredients)
+            {
+                return serializer.SerializeRecipesWithIngredients(
+                    await repository.GetRecipesWithIngredients(options.Match),
+                    IngredientList.Inventory
+                );
+            }
 
             return serializer.SerializeRecipes(await repository.GetRecipes(options.Match));
         }

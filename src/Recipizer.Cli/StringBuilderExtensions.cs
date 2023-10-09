@@ -82,6 +82,95 @@ internal static class StringBuilderExtensions
         return sb.AppendLine();
     }
 
+    public static StringBuilder AppendRowFirstColumnRightAdjustedLastColumnMultiline(
+        this StringBuilder sb,
+        (int, string) firstColumnInnerWidthsAndContent,
+        (int, string) secondColumnInnerWidthsAndContent,
+        (int, string) thirdColumnInnerWidthsAndContent,
+        (int, string[]) fourthColumnInnerWidthsAndContent
+    )
+    {
+        var (firstWidth, firstContent) = firstColumnInnerWidthsAndContent;
+        var (secondWidth, secondContent) = secondColumnInnerWidthsAndContent;
+        var (thirdWidth, thirdContent) = thirdColumnInnerWidthsAndContent;
+        var (fourthWidth, fourthContent) = fourthColumnInnerWidthsAndContent;
+
+        var fourthContentTop = fourthContent.Take(fourthContent.Length / 2 + 1);
+        var fourthContentMiddle = fourthContent.Skip(fourthContent.Length / 2 + 1).Take(1).Single();
+        var fourthContentBottom = fourthContent.Skip(fourthContent.Length / 2 + 1).Skip(1);
+
+        foreach (var line in fourthContentTop)
+        {
+            sb.Append('│')
+                .Append(' ')
+                .Append(' ', firstWidth)
+                .Append(' ')
+                .Append('│')
+                .Append(' ')
+                .Append(' ', secondWidth)
+                .Append(' ')
+                .Append('│')
+                .Append(' ')
+                .Append(' ', thirdWidth)
+                .Append(' ')
+                .Append('│')
+                .Append(' ')
+                .Append(line)
+                .Append(' ', InnerPadding(fourthWidth, line))
+                .Append(' ')
+                .Append('│')
+                .AppendLine();
+        }
+
+        sb.Append('│')
+            .Append(' ')
+            .Append(' ', InnerPadding(firstWidth, firstContent))
+            .Append(firstContent)
+            .Append(' ')
+            .Append('│')
+            .Append(' ')
+            .Append(secondContent)
+            .Append(' ', InnerPadding(secondWidth, secondContent))
+            .Append(' ')
+            .Append('│')
+            .Append(' ')
+            .Append(thirdContent)
+            .Append(' ', InnerPadding(thirdWidth, thirdContent))
+            .Append(' ')
+            .Append('│')
+            .Append(' ')
+            .Append(fourthContentMiddle)
+            .Append(' ', InnerPadding(fourthWidth, fourthContentMiddle))
+            .Append(' ')
+            .Append('│')
+            .AppendLine();
+
+        foreach (var line in fourthContentBottom)
+        {
+            sb.Append('│')
+                .Append(' ')
+                .Append(' ', firstWidth)
+                .Append(' ')
+                .Append('│')
+                .Append(' ')
+                .Append(' ', secondWidth)
+                .Append(' ')
+                .Append('│')
+                .Append(' ')
+                .Append(' ', thirdWidth)
+                .Append(' ')
+                .Append('│')
+                .Append(' ')
+                .Append(line)
+                .Append(' ', InnerPadding(fourthWidth, line))
+                .Append(' ')
+                .Append('│')
+                .AppendLine();
+        }
+
+        return sb;
+    }
+
     public static StringBuilder AppendRow(
         this StringBuilder sb,
         params (int, string)[] columnInnerWidthsAndContent

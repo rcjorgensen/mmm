@@ -121,6 +121,85 @@ internal sealed class Repository
             );
     }
 
+    internal async Task<IEnumerable<RecipeListModel>> GetRecipesWithIngredients(
+        string? match = null
+    )
+    {
+        return match != null
+            ? (
+                from x in await connection.QueryAsync<
+                    RecipeListModel,
+                    IngredientListModel,
+                    RecipeListModel
+                >(
+                    """
+                    SELECT
+                        r.recipe_id,
+                        r.name,
+                        r.details,
+                        i.ingredient_id,
+                        i.name,
+                        ii.added
+                    FROM recipe r
+                    JOIN recipe_ingredient ri ON r.recipe_id = ri.recipe_id
+                    JOIN ingredient i ON ri.ingredient_id = i.ingredient_id
+                    LEFT JOIN inventory_ingredient ii ON i.ingredient_id = ii.ingredient_id
+                    WHERE LOWER (r.name) LIKE @match
+                    ORDER BY ii.added, i.ingredient_id
+                    """,
+                    (recipe, ingredient) =>
+                    {
+                        recipe.AllIngredients.Add(ingredient);
+                        return recipe;
+                    },
+                    new { match },
+                    splitOn: "ingredient_id"
+                )
+                group x by x.RecipeId into g
+                select g
+            ).Select(g =>
+            {
+                var recipe = g.First();
+                recipe.AllIngredients = (from r in g from i in r.AllIngredients select i).ToList();
+                return recipe;
+            })
+            : (
+                from x in await connection.QueryAsync<
+                    RecipeListModel,
+                    IngredientListModel,
+                    RecipeListModel
+                >(
+                    """
+                    SELECT
+                        r.recipe_id,
+                        r.name,
+                        r.details,
+                        i.ingredient_id,
+                        i.name,
+                        ii.added
+                    FROM recipe r
+                    JOIN recipe_ingredient ri ON r.recipe_id = ri.recipe_id
+                    JOIN ingredient i ON ri.ingredient_id = i.ingredient_id
+                    LEFT JOIN inventory_ingredient ii ON i.ingredient_id = ii.ingredient_id
+                    ORDER BY ii.added, i.ingredient_id 
+                    """,
+                    (recipe, ingredient) =>
+                    {
+                        recipe.AllIngredients.Add(ingredient);
+                        return recipe;
+                    },
+                    splitOn: "ingredient_id"
+                )
+                group x by x.RecipeId into g
+                select g
+            ).Select(g =>
+            {
+                var recipe = g.First();
+                recipe.AllIngredients = (from r in g from i in r.AllIngredients select i).ToList();
+                return recipe;
+            });
+    }
+
     internal Task DeleteRecipe(long id)
     {
         return connection.ExecuteAsync(

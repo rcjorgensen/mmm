@@ -14,6 +14,12 @@ internal sealed class RecipesOptions
     [Option('i', "with-ingredients", SetName = "list")]
     public bool WithIngredients { get; set; }
 
+    [Option("with-missing-ingredients", SetName = "list")]
+    public bool WithMissingIngredients { get; set; }
+
+    [Option("with-inventory-ingredients", SetName = "list")]
+    public bool WithInventoryIngredients { get; set; }
+
     [Option('a', "add", SetName = "add")]
     public bool Add { get; set; }
 
