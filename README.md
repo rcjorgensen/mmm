@@ -240,3 +240,9 @@ dotnet run -- ingredients --inventory
 │ 63 │ Black pepper     │ 2023-10-08 │
 └────┴──────────────────┴────────────┘
 ```
+
+# Roadmap
+
+* Add more recipes
+* Prioritize recipes with perishable ingredients in inventory
+* List ingredients with recipes where they are used and order by most used
