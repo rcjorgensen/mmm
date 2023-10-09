@@ -6,6 +6,12 @@
 
 ## Ubuntu
 
+### Install dotnet-sdk-7.0
+
+```zsh
+sudo apt-get install dotnet-sdk-7.0
+```
+
 ### Install sqlite3
 
 ```zsh
