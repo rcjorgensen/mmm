@@ -11,6 +11,9 @@ internal sealed class RecipesOptions
     [Option('m', "match", SetName = "list")]
     public string? Match { get; set; }
 
+    [Option('t', "take", SetName = "list")]
+    public int? Take { get; set; }
+
     [Option('i', "with-ingredients", SetName = "list")]
     public bool WithIngredients { get; set; }
 

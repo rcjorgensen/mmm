@@ -109,28 +109,48 @@ internal sealed class Application
         {
             if (options.WithIngredients)
             {
-                return serializer.SerializeRecipesWithIngredients(
-                    await repository.GetRecipesWithIngredients(options.Match)
-                );
+                var recipes = await repository.GetRecipesWithIngredients(options.Match);
+                if (options.Take != null)
+                {
+                    recipes = recipes.Take(options.Take.Value);
+                }
+
+                return serializer.SerializeRecipesWithIngredients(recipes);
             }
 
             if (options.WithMissingIngredients)
             {
-                return serializer.SerializeRecipesWithIngredients(
-                    await repository.GetRecipesWithIngredients(options.Match),
-                    IngredientList.Missing
-                );
+                var recipes = await repository.GetRecipesWithIngredients(options.Match);
+                if (options.Take != null)
+                {
+                    recipes = recipes.Take(options.Take.Value);
+                }
+
+                return serializer.SerializeRecipesWithIngredients(recipes, IngredientList.Missing);
             }
 
             if (options.WithInventoryIngredients)
             {
+                var recipes = await repository.GetRecipesWithIngredients(options.Match);
+                if (options.Take != null)
+                {
+                    recipes = recipes.Take(options.Take.Value);
+                }
+
                 return serializer.SerializeRecipesWithIngredients(
-                    await repository.GetRecipesWithIngredients(options.Match),
+                    recipes,
                     IngredientList.Inventory
                 );
             }
 
-            return serializer.SerializeRecipes(await repository.GetRecipes(options.Match));
+            var recipesFallBack = await repository.GetRecipes(options.Match);
+
+            if (options.Take != null)
+            {
+                recipesFallBack = recipesFallBack.Take(options.Take.Value);
+            }
+
+            return serializer.SerializeRecipes(recipesFallBack);
         }
 
         if (options.Add)
