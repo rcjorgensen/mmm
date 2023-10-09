@@ -110,17 +110,57 @@ internal sealed class Application
             if (options.WithIngredients)
             {
                 var recipes = await repository.GetRecipesWithIngredients(options.Match);
+
+                if (options.ByFewest)
+                {
+                    recipes = recipes
+                        .OrderBy(x => x.AllIngredients.Count)
+                        .ThenBy(x => x.MissingIngredients.Count);
+                }
+                else if (options.ByFewestMissing)
+                {
+                    recipes = recipes
+                        .OrderBy(x => x.MissingIngredients.Count)
+                        .ThenBy(x => x.AllIngredients.Count);
+                }
+                else if (options.ByMostInInventory)
+                {
+                    recipes = recipes
+                        .OrderByDescending(x => x.InventoryIngredients.Count)
+                        .ThenBy(x => x.AllIngredients.Count);
+                }
+
                 if (options.Take != null)
                 {
                     recipes = recipes.Take(options.Take.Value);
                 }
 
-                return serializer.SerializeRecipesWithIngredients(recipes);
+                return serializer.SerializeRecipesWithIngredients(recipes, IngredientList.All);
             }
 
             if (options.WithMissingIngredients)
             {
                 var recipes = await repository.GetRecipesWithIngredients(options.Match);
+
+                if (options.ByFewest)
+                {
+                    recipes = recipes
+                        .OrderBy(x => x.AllIngredients.Count)
+                        .ThenBy(x => x.MissingIngredients.Count);
+                }
+                else if (options.ByFewestMissing)
+                {
+                    recipes = recipes
+                        .OrderBy(x => x.MissingIngredients.Count)
+                        .ThenBy(x => x.AllIngredients.Count);
+                }
+                else if (options.ByMostInInventory)
+                {
+                    recipes = recipes
+                        .OrderByDescending(x => x.InventoryIngredients.Count)
+                        .ThenBy(x => x.AllIngredients.Count);
+                }
+
                 if (options.Take != null)
                 {
                     recipes = recipes.Take(options.Take.Value);
@@ -132,6 +172,26 @@ internal sealed class Application
             if (options.WithInventoryIngredients)
             {
                 var recipes = await repository.GetRecipesWithIngredients(options.Match);
+
+                if (options.ByFewest)
+                {
+                    recipes = recipes
+                        .OrderBy(x => x.AllIngredients.Count)
+                        .ThenBy(x => x.MissingIngredients.Count);
+                }
+                else if (options.ByFewestMissing)
+                {
+                    recipes = recipes
+                        .OrderBy(x => x.MissingIngredients.Count)
+                        .ThenBy(x => x.AllIngredients.Count);
+                }
+                else if (options.ByMostInInventory)
+                {
+                    recipes = recipes
+                        .OrderByDescending(x => x.InventoryIngredients.Count)
+                        .ThenBy(x => x.AllIngredients.Count);
+                }
+
                 if (options.Take != null)
                 {
                     recipes = recipes.Take(options.Take.Value);

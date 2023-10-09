@@ -23,6 +23,15 @@ internal sealed class RecipesOptions
     [Option("with-inventory-ingredients", SetName = "list")]
     public bool WithInventoryIngredients { get; set; }
 
+    [Option("by-fewest", SetName = "list")]
+    public bool ByFewest { get; set; }
+
+    [Option("by-fewest-missing", SetName = "list")]
+    public bool ByFewestMissing { get; set; }
+
+    [Option("by-most-in-inventory", SetName = "list")]
+    public bool ByMostInInventory { get; set; }
+
     [Option('a', "add", SetName = "add")]
     public bool Add { get; set; }
 
