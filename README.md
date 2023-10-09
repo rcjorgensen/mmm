@@ -78,7 +78,7 @@ dotnet run -- ingredients --missing
 
 ```zsh
 cd src/Recipizer.Cli
-dotnet run -- inventory --add 40 47 55
+dotnet run -- ingredients --add --to-inventory 40 47 55
 
 ┌────┬──────────────────┬────────────┐
 │ Id │ Name             │ Added      │
@@ -97,7 +97,23 @@ dotnet run -- inventory --add 40 47 55
 #### Remove ingredients from inventory
 
 ```zsh
-dotnet run -- inventory --remove 40 47 55
+dotnet run -- ingredients --remove --from-inventory 40 47 55
+
+┌────┬──────────────────┬────────────┐
+│ Id │ Name             │ Added      │
+├────┼──────────────────┼────────────┤
+│ 34 │ Apple juice      │ 2023-10-08 │
+│ 38 │ Blueberry        │ 2023-10-08 │
+│ 39 │ Blackberry       │ 2023-10-08 │
+│ 44 │ Paprika          │ 2023-10-08 │
+│ 63 │ Black pepper     │ 2023-10-08 │
+└────┴──────────────────┴────────────┘
+```
+
+#### List ingredients in inventory
+
+```zsh
+dotnet run -- ingredients --inventory
 
 ┌────┬──────────────────┬────────────┐
 │ Id │ Name             │ Added      │
