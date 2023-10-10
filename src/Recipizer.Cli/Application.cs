@@ -5,78 +5,75 @@ namespace Recipizer.Cli;
 
 internal sealed class Application
 {
-    private readonly Configuration configuration;
-    private readonly Repository repository;
-    private readonly FileSystem fileSystem;
-    private readonly Deserializer deserializer;
-    private readonly Serializer serializer;
+    private readonly Configuration _configuration;
+    private readonly Repository _repository;
+    private readonly FileSystem _fileSystem;
+    private readonly Deserializer _deserializer;
 
     public Application(
         Configuration configuration,
         Repository repository,
         FileSystem fileSystem,
-        Deserializer deserializer,
-        Serializer serializer
+        Deserializer deserializer
     )
     {
-        this.configuration = configuration;
-        this.repository = repository;
-        this.fileSystem = fileSystem;
-        this.deserializer = deserializer;
-        this.serializer = serializer;
+        _configuration = configuration;
+        _repository = repository;
+        _fileSystem = fileSystem;
+        _deserializer = deserializer;
     }
 
     public async Task<string> Init(InitOptions options)
     {
-        var schemaFilePath = configuration.SchemaFilePath;
+        var schemaFilePath = _configuration.SchemaFilePath;
         if (schemaFilePath == null)
         {
             return "ERROR: Could not get schema file from configuration";
         }
 
-        var databaseFilePath = configuration.DatabaseFilePath;
+        var databaseFilePath = _configuration.DatabaseFilePath;
         if (databaseFilePath == null)
         {
             return "ERROR: Could not get database file from configuration";
         }
 
-        var dataFilePath = configuration.DataFilePath;
+        var dataFilePath = _configuration.DataFilePath;
         if (dataFilePath == null)
         {
             return "ERROR: Could not get data file path from configuration";
         }
 
-        if (options.Force && fileSystem.Exists(databaseFilePath))
+        if (options.Force && _fileSystem.Exists(databaseFilePath))
         {
-            fileSystem.Delete(databaseFilePath);
-            fileSystem.Create(databaseFilePath);
+            _fileSystem.Delete(databaseFilePath);
+            _fileSystem.Create(databaseFilePath);
         }
 
-        var schema = await fileSystem.ReadAllTextAsync(schemaFilePath);
+        var schema = await _fileSystem.ReadAllTextAsync(schemaFilePath);
 
-        await repository.ExecuteRaw(schema);
+        await _repository.ExecuteRaw(schema);
 
-        var data = await fileSystem.ReadAllTextAsync(dataFilePath);
+        var data = await _fileSystem.ReadAllTextAsync(dataFilePath);
 
-        var recipes = deserializer.DeserializeRecipes(data);
+        var recipes = _deserializer.DeserializeRecipes(data);
 
         if (recipes == null)
         {
             return "ERROR: Could not read recipes";
         }
 
-        var recipeSource = deserializer.DeserializeRecipeSource(data);
+        var recipeSource = _deserializer.DeserializeRecipeSource(data);
 
         if (recipeSource == null)
         {
             return "ERROR: Could not read recipe source";
         }
 
-        var recipeSourceId = await repository.CreateRecipeSource(recipeSource);
+        var recipeSourceId = await _repository.CreateRecipeSource(recipeSource);
 
         foreach (var recipe in recipes)
         {
-            var recipeId = await repository.CreateRecipe(
+            var recipeId = await _repository.CreateRecipe(
                 recipe.Name,
                 recipe.Details,
                 recipeSourceId
@@ -84,8 +81,8 @@ internal sealed class Application
 
             foreach (var ingredient in recipe.Ingredients)
             {
-                var ingredientId = await repository.GetOrCreateIngredient(ingredient);
-                await repository.AddIngredientToRecipe(recipeId, ingredientId);
+                var ingredientId = await _repository.GetOrCreateIngredient(ingredient);
+                await _repository.AddIngredientToRecipe(recipeId, ingredientId);
             }
         }
 
@@ -94,13 +91,13 @@ internal sealed class Application
 
     internal async Task<string> Recipes(RecipesOptions options)
     {
-        var databaseFilePath = configuration.DatabaseFilePath;
+        var databaseFilePath = _configuration.DatabaseFilePath;
         if (databaseFilePath == null)
         {
             return "ERROR: Could not get database file from configuration";
         }
 
-        if (!fileSystem.Exists(databaseFilePath))
+        if (!_fileSystem.Exists(databaseFilePath))
         {
             return "ERROR: Database file does not exist, run `init`";
         }
@@ -109,7 +106,7 @@ internal sealed class Application
         {
             if (options.WithIngredients)
             {
-                var recipes = await repository.GetRecipesWithIngredients(options.Match);
+                var recipes = await _repository.GetRecipesWithIngredients(options.Match);
 
                 if (options.ByFewest)
                 {
@@ -135,12 +132,12 @@ internal sealed class Application
                     recipes = recipes.Take(options.Take.Value);
                 }
 
-                return serializer.SerializeRecipesWithIngredients(recipes, IngredientList.All);
+                return Serializer.SerializeRecipesWithIngredients(recipes, IngredientList.All);
             }
 
             if (options.WithMissingIngredients)
             {
-                var recipes = await repository.GetRecipesWithIngredients(options.Match);
+                var recipes = await _repository.GetRecipesWithIngredients(options.Match);
 
                 if (options.ByFewest)
                 {
@@ -166,12 +163,12 @@ internal sealed class Application
                     recipes = recipes.Take(options.Take.Value);
                 }
 
-                return serializer.SerializeRecipesWithIngredients(recipes, IngredientList.Missing);
+                return Serializer.SerializeRecipesWithIngredients(recipes, IngredientList.Missing);
             }
 
             if (options.WithInventoryIngredients)
             {
-                var recipes = await repository.GetRecipesWithIngredients(options.Match);
+                var recipes = await _repository.GetRecipesWithIngredients(options.Match);
 
                 if (options.ByFewest)
                 {
@@ -197,20 +194,20 @@ internal sealed class Application
                     recipes = recipes.Take(options.Take.Value);
                 }
 
-                return serializer.SerializeRecipesWithIngredients(
+                return Serializer.SerializeRecipesWithIngredients(
                     recipes,
                     IngredientList.Inventory
                 );
             }
 
-            var recipesFallBack = await repository.GetRecipes(options.Match);
+            var recipesFallBack = await _repository.GetRecipes(options.Match);
 
             if (options.Take != null)
             {
                 recipesFallBack = recipesFallBack.Take(options.Take.Value);
             }
 
-            return serializer.SerializeRecipes(recipesFallBack);
+            return Serializer.SerializeRecipes(recipesFallBack);
         }
 
         if (options.Add)
@@ -218,56 +215,56 @@ internal sealed class Application
             var name = options.Name;
             var details = options.Details;
 
-            var id = await repository.CreateRecipe(name, details);
+            var id = await _repository.CreateRecipe(name, details);
 
-            var recipes = await repository.GetRecipes();
+            var recipes = await _repository.GetRecipes();
             var newRecipe = (from r in recipes where r.RecipeId == id select r).Single();
             newRecipe.Name += "*";
 
-            return serializer.SerializeRecipes(recipes);
+            return Serializer.SerializeRecipes(recipes);
         }
 
         if (options.Remove)
         {
             var id = options.Id;
 
-            await repository.DeleteRecipe(id);
+            await _repository.DeleteRecipe(id);
 
-            return serializer.SerializeRecipes(await repository.GetRecipes());
+            return Serializer.SerializeRecipes(await _repository.GetRecipes());
         }
 
-        return serializer.SerializeRecipes(await repository.GetRecipes(options.Match));
+        return Serializer.SerializeRecipes(await _repository.GetRecipes(options.Match));
     }
 
     internal async Task<string> Ingredients(IngredientsOptions options)
     {
-        var databaseFilePath = configuration.DatabaseFilePath;
+        var databaseFilePath = _configuration.DatabaseFilePath;
         if (databaseFilePath == null)
         {
             return "ERROR: Could not get database file from configuration";
         }
 
-        if (!fileSystem.Exists(databaseFilePath))
+        if (!_fileSystem.Exists(databaseFilePath))
         {
             return "ERROR: Database file does not exist, run `init`";
         }
 
         if (options.List)
         {
-            return serializer.SerializeIngredientsWithAdded(
-                await repository.GetIngredients(options.Match)
+            return Serializer.SerializeIngredientsWithAdded(
+                await _repository.GetIngredients(options.Match)
             );
         }
 
         if (options.Missing)
         {
-            return serializer.SerializeIngredients(await repository.GetMissing(options.Match));
+            return Serializer.SerializeIngredients(await _repository.GetMissing(options.Match));
         }
 
         if (options.Inventory)
         {
-            return serializer.SerializeIngredientsWithAdded(
-                await repository.GetInventory(options.Match)
+            return Serializer.SerializeIngredientsWithAdded(
+                await _repository.GetInventory(options.Match)
             );
         }
 
@@ -275,10 +272,10 @@ internal sealed class Application
         {
             foreach (var ingredientId in options.FromInventory)
             {
-                await repository.DeleteInventoryIngredient(ingredientId);
+                await _repository.DeleteInventoryIngredient(ingredientId);
             }
 
-            return serializer.SerializeIngredientsWithAdded(await repository.GetInventory());
+            return Serializer.SerializeIngredientsWithAdded(await _repository.GetInventory());
         }
 
         if (options.Add)
@@ -287,10 +284,10 @@ internal sealed class Application
 
             foreach (var ingredientId in ingredientIds)
             {
-                await repository.CreateInventoryIngredient(ingredientId);
+                await _repository.CreateInventoryIngredient(ingredientId);
             }
 
-            var inventory = await repository.GetInventory();
+            var inventory = await _repository.GetInventory();
             var newIngredients = (
                 from x in inventory
                 join y in ingredientIds on x.IngredientId equals y
@@ -301,11 +298,11 @@ internal sealed class Application
                 newIngredient.Name += "*";
             }
 
-            return serializer.SerializeIngredientsWithAdded(inventory);
+            return Serializer.SerializeIngredientsWithAdded(inventory);
         }
 
-        return serializer.SerializeIngredientsWithAdded(
-            await repository.GetIngredients(options.Match)
+        return Serializer.SerializeIngredientsWithAdded(
+            await _repository.GetIngredients(options.Match)
         );
     }
 }

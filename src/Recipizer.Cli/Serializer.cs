@@ -1,66 +1,54 @@
-using System.Text;
 using Recipizer.Cli.Models;
 
 namespace Recipizer.Cli;
 
-internal sealed class Serializer
+internal static class Serializer
 {
-    public string SerializeRecipes(IEnumerable<RecipeListModel> recipes)
+    public static string SerializeRecipes(IEnumerable<RecipeListModel> recipes)
     {
         recipes = recipes.ToList();
 
         var idHeader = "Id";
         var nameHeader = "Name";
         var detailsHeader = "Details";
-        var horizontalPadding = 2;
+
+        var columnInnerWidths = new int[3];
 
         // MaxBy should never return null here
-        var idInnerWidth = Math.Max(
+        columnInnerWidths[0] = Math.Max(
             idHeader.Length,
             recipes.Select(x => x.RecipeId.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var nameInnerWidth = Math.Max(
+        columnInnerWidths[1] = Math.Max(
             nameHeader.Length,
             recipes.Select(x => x.Name.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
-        var detailsInnerWidth = Math.Max(
+
+        columnInnerWidths[2] = Math.Max(
             detailsHeader.Length,
             recipes.Select(x => x.Details.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var idOuterWidth = idInnerWidth + horizontalPadding;
-        var nameOuterWidth = nameInnerWidth + horizontalPadding;
-        var detailsOuterWidth = detailsInnerWidth + horizontalPadding;
+        var tb = new TableBuilder(columnInnerWidths);
 
-        var sb = new StringBuilder();
-        sb.AppendTop(idOuterWidth, nameOuterWidth, detailsOuterWidth);
-
-        sb.AppendRow(
-            (idInnerWidth, idHeader, true),
-            (nameInnerWidth, nameHeader, false),
-            (detailsInnerWidth, detailsHeader, false)
-        );
-
-        sb.AppendSeparator(idOuterWidth, nameOuterWidth, detailsOuterWidth);
+        tb.AppendTop();
+        tb.AppendRow(idHeader, nameHeader, detailsHeader);
+        tb.AppendSeparator();
 
         foreach (var recipe in recipes)
         {
             var recipeId = recipe.RecipeId.ToString();
 
-            sb.AppendRow(
-                (idInnerWidth, recipeId, true),
-                (nameInnerWidth, recipe.Name, false),
-                (detailsInnerWidth, recipe.Details, false)
-            );
+            tb.AppendRow(recipeId, recipe.Name, recipe.Details);
         }
 
-        sb.AppendBottom(idOuterWidth, nameOuterWidth, detailsOuterWidth);
+        tb.AppendBottom();
 
-        return sb.ToString();
+        return tb.Build();
     }
 
-    internal string SerializeRecipesWithIngredients(
+    internal static string SerializeRecipesWithIngredients(
         IEnumerable<RecipeListModel> recipes,
         IngredientList ingredientList = IngredientList.All
     )
@@ -99,161 +87,133 @@ internal sealed class Serializer
             _ => throw new NotImplementedException()
         };
 
-        var horizontalPadding = 2;
+        var columnInnerWidths = new int[4];
 
         // MaxBy should never return null here
-        var idInnerWidth = Math.Max(
+        columnInnerWidths[0] = Math.Max(
             idHeader.Length,
             recipes.Select(x => x.RecipeId.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var nameInnerWidth = Math.Max(
+        columnInnerWidths[1] = Math.Max(
             nameHeader.Length,
             recipes.Select(x => x.Name.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var detailsInnerWidth = Math.Max(
+        columnInnerWidths[2] = Math.Max(
             detailsHeader.Length,
             recipes.Select(x => x.Details.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var ingredientsInnerWidth = Math.Max(
+        columnInnerWidths[3] = Math.Max(
             ingredientsHeader.Length,
             (from x in ingredientSubTables.Values from y in x select y).MaxBy(i => i.Length)?.Length
                 ?? 0
         );
 
-        var idOuterWidth = idInnerWidth + horizontalPadding;
-        var nameOuterWidth = nameInnerWidth + horizontalPadding;
-        var detailsOuterWidth = detailsInnerWidth + horizontalPadding;
-        var ingredientsOuterWidth = ingredientsInnerWidth + horizontalPadding;
+        var tb = new TableBuilder(columnInnerWidths);
 
-        var sb = new StringBuilder();
-        sb.AppendTop(idOuterWidth, nameOuterWidth, detailsOuterWidth, ingredientsOuterWidth);
-
-        sb.AppendRow(
-            (idInnerWidth, idHeader, true),
-            (nameInnerWidth, nameHeader, false),
-            (detailsInnerWidth, detailsHeader, false),
-            (ingredientsInnerWidth, ingredientsHeader, false)
-        );
-
-        sb.AppendSeparator(idOuterWidth, nameOuterWidth, detailsOuterWidth, ingredientsOuterWidth);
+        tb.AppendTop();
+        tb.AppendRow(idHeader, nameHeader, detailsHeader, ingredientsHeader);
+        tb.AppendSeparator();
 
         foreach (var recipe in recipes)
         {
             var recipeId = recipe.RecipeId.ToString();
 
-            sb.AppendRow(
-                (idInnerWidth, new[] { recipeId }, true),
-                (nameInnerWidth, new[] { recipe.Name }, false),
-                (detailsInnerWidth, new[] { recipe.Details }, false),
-                (ingredientsInnerWidth, ingredientSubTables[recipe], false)
+            tb.AppendRow(
+                new[] { recipeId },
+                new[] { recipe.Name },
+                new[] { recipe.Details },
+                ingredientSubTables[recipe]
             );
         }
 
-        sb.AppendBottom(idOuterWidth, nameOuterWidth, detailsOuterWidth, ingredientsOuterWidth);
+        tb.AppendBottom();
 
-        return sb.ToString();
+        return tb.Build();
     }
 
-    internal string SerializeIngredients(IEnumerable<IngredientListModel> ingredients)
+    internal static string SerializeIngredients(IEnumerable<IngredientListModel> ingredients)
     {
         ingredients = ingredients.ToList();
 
         var idHeader = "Id";
         var nameHeader = "Name";
-        var horizontalPadding = 2;
+
+        var columnInnerWidths = new int[2];
 
         // MaxBy should never return null here
-        var idInnerWidth = Math.Max(
+        columnInnerWidths[0] = Math.Max(
             idHeader.Length,
             ingredients.Select(x => x.IngredientId.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var nameInnerWidth = Math.Max(
+        columnInnerWidths[1] = Math.Max(
             nameHeader.Length,
             ingredients.Select(x => x.Name.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var idOuterWidth = idInnerWidth + horizontalPadding;
-        var nameOuterWidth = nameInnerWidth + horizontalPadding;
+        var tb = new TableBuilder(columnInnerWidths);
 
-        var sb = new StringBuilder();
-        sb.AppendTop(idOuterWidth, nameOuterWidth);
-
-        sb.AppendRow((idInnerWidth, idHeader, true), (nameInnerWidth, nameHeader, false));
-
-        sb.AppendSeparator(idOuterWidth, nameOuterWidth);
+        tb.AppendTop();
+        tb.AppendRow(idHeader, nameHeader);
+        tb.AppendSeparator();
 
         foreach (var ingredient in ingredients)
         {
             var ingredientId = ingredient.IngredientId.ToString();
 
-            sb.AppendRow(
-                (idInnerWidth, ingredientId, true),
-                (nameInnerWidth, ingredient.Name, false)
-            );
+            tb.AppendRow(ingredientId, ingredient.Name);
         }
 
-        sb.AppendBottom(idOuterWidth, nameOuterWidth);
+        tb.AppendBottom();
 
-        return sb.ToString();
+        return tb.Build();
     }
 
-    internal string SerializeIngredientsWithAdded(IEnumerable<IngredientListModel> inventory)
+    internal static string SerializeIngredientsWithAdded(IEnumerable<IngredientListModel> inventory)
     {
         inventory = inventory.ToList();
 
         var idHeader = "Id";
         var nameHeader = "Name";
         var addedHeader = "Added";
-        var horizontalPadding = 2;
+
+        var columnInnerWidths = new int[3];
 
         // MaxBy should never return null here
-        var idInnerWidth = Math.Max(
+        columnInnerWidths[0] = Math.Max(
             idHeader.Length,
             inventory.Select(x => x.IngredientId.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var nameInnerWidth = Math.Max(
+        columnInnerWidths[1] = Math.Max(
             nameHeader.Length,
             inventory.Select(x => x.Name.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var addedInnerWidth = Math.Max(
+        columnInnerWidths[2] = Math.Max(
             addedHeader.Length,
             inventory.Select(x => x.Added.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var idOuterWidth = idInnerWidth + horizontalPadding;
-        var nameOuterWidth = nameInnerWidth + horizontalPadding;
-        var addedOuterWidth = addedInnerWidth + horizontalPadding;
+        var tb = new TableBuilder(columnInnerWidths);
+        tb.AppendTop();
 
-        var sb = new StringBuilder();
-        sb.AppendTop(idOuterWidth, nameOuterWidth, addedOuterWidth);
+        tb.AppendRow(idHeader, nameHeader, addedHeader);
 
-        sb.AppendRow(
-            (idInnerWidth, idHeader, true),
-            (nameInnerWidth, nameHeader, false),
-            (addedInnerWidth, addedHeader, false)
-        );
-
-        sb.AppendSeparator(idOuterWidth, nameOuterWidth, addedOuterWidth);
+        tb.AppendSeparator();
 
         foreach (var ingredient in inventory)
         {
             var ingredientId = ingredient.IngredientId.ToString();
 
-            sb.AppendRow(
-                (idInnerWidth, ingredientId, true),
-                (nameInnerWidth, ingredient.Name, false),
-                (addedInnerWidth, ingredient.Added, false)
-            );
+            tb.AppendRow(ingredientId, ingredient.Name, ingredient.Added);
         }
 
-        sb.AppendBottom(idOuterWidth, nameOuterWidth, addedOuterWidth);
+        tb.AppendBottom();
 
-        return sb.ToString();
+        return tb.Build();
     }
 }

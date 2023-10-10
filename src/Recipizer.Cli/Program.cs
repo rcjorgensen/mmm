@@ -46,13 +46,7 @@ var repository = new Repository(
     new SQLiteConnection($"Data Source={configuration.DatabaseFilePath}")
 );
 
-var app = new Application(
-    configuration,
-    repository,
-    new FileSystem(),
-    new Deserializer(),
-    new Serializer()
-);
+var app = new Application(configuration, repository, new FileSystem(), new Deserializer());
 
 // Parsing command line arguments
 
