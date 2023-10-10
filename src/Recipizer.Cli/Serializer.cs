@@ -216,4 +216,41 @@ internal static class Serializer
 
         return tb.Build();
     }
+
+    internal static string SerializeIngredientsToMarkdown(
+        IEnumerable<IngredientListModel> ingredients
+    )
+    {
+        ingredients = ingredients.ToList();
+
+        var idHeader = "Id";
+        var nameHeader = "Name";
+
+        var columnInnerWidths = new int[2];
+
+        // MaxBy should never return null here
+        columnInnerWidths[0] = Math.Max(
+            idHeader.Length,
+            ingredients.Select(x => x.IngredientId.ToString()).MaxBy(i => i.Length)?.Length ?? 0
+        );
+
+        columnInnerWidths[1] = Math.Max(
+            nameHeader.Length,
+            ingredients.Select(x => x.Name.ToString()).MaxBy(i => i.Length)?.Length ?? 0
+        );
+
+        var tb = new MarkdownTableBuilder(columnInnerWidths);
+
+        tb.AppendRow(idHeader, nameHeader);
+        tb.AppendSeparator();
+
+        foreach (var ingredient in ingredients)
+        {
+            var ingredientId = ingredient.IngredientId.ToString();
+
+            tb.AppendRow(ingredientId, ingredient.Name);
+        }
+
+        return tb.Build();
+    }
 }

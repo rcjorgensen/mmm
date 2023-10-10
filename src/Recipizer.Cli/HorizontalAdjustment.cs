@@ -3,5 +3,7 @@ namespace Recipizer.Cli;
 internal enum HorizontalAdjustment
 {
     Left,
-    Right
+    Right,
+    Center,
+    NotSpecified
 }
