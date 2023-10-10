@@ -132,7 +132,12 @@ internal sealed class Application
                     recipes = recipes.Take(options.Take.Value);
                 }
 
-                return Serializer.SerializeRecipesWithIngredients(recipes, IngredientList.All);
+                return options.Markdown
+                    ? MarkdownSerializer.SerializeRecipesWithIngredients(
+                        recipes,
+                        IngredientList.All
+                    )
+                    : Serializer.SerializeRecipesWithIngredients(recipes, IngredientList.All);
             }
 
             if (options.WithMissingIngredients)
@@ -163,7 +168,12 @@ internal sealed class Application
                     recipes = recipes.Take(options.Take.Value);
                 }
 
-                return Serializer.SerializeRecipesWithIngredients(recipes, IngredientList.Missing);
+                return options.Markdown
+                    ? MarkdownSerializer.SerializeRecipesWithIngredients(
+                        recipes,
+                        IngredientList.Missing
+                    )
+                    : Serializer.SerializeRecipesWithIngredients(recipes, IngredientList.Missing);
             }
 
             if (options.WithInventoryIngredients)
@@ -194,10 +204,12 @@ internal sealed class Application
                     recipes = recipes.Take(options.Take.Value);
                 }
 
-                return Serializer.SerializeRecipesWithIngredients(
-                    recipes,
-                    IngredientList.Inventory
-                );
+                return options.Markdown
+                    ? MarkdownSerializer.SerializeRecipesWithIngredients(
+                        recipes,
+                        IngredientList.Inventory
+                    )
+                    : Serializer.SerializeRecipesWithIngredients(recipes, IngredientList.Inventory);
             }
 
             var recipesFallBack = await _repository.GetRecipes(options.Match);
@@ -207,7 +219,9 @@ internal sealed class Application
                 recipesFallBack = recipesFallBack.Take(options.Take.Value);
             }
 
-            return Serializer.SerializeRecipes(recipesFallBack);
+            return options.Markdown
+                ? MarkdownSerializer.SerializeRecipes(recipesFallBack)
+                : Serializer.SerializeRecipes(recipesFallBack);
         }
 
         if (options.Add)

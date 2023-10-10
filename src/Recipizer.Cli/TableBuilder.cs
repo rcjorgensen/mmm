@@ -7,26 +7,26 @@ internal sealed class TableBuilder
     private readonly StringBuilder _sb = new();
     private readonly int[] _columnInnerWidths;
     private readonly int[] _columnOuterWidths;
-    private readonly HorizontalAdjustment[] _horizontalAdjustments;
+    private readonly HorizontalAlignment[] _horizontalAlignments;
     private const int HorizontalPadding = 2;
 
     public TableBuilder(
         int[] columnInnerWidths,
-        HorizontalAdjustment[]? horizontalAdjustments = null
+        HorizontalAlignment[]? horizontalAlignments = null
     )
     {
-        if (horizontalAdjustments == null)
+        if (horizontalAlignments == null)
         {
-            horizontalAdjustments = new HorizontalAdjustment[columnInnerWidths.Length];
-            horizontalAdjustments[0] = HorizontalAdjustment.Right;
+            horizontalAlignments = new HorizontalAlignment[columnInnerWidths.Length];
+            horizontalAlignments[0] = HorizontalAlignment.Right;
 
-            for (int i = 1; i < horizontalAdjustments.Length; i++)
+            for (int i = 1; i < horizontalAlignments.Length; i++)
             {
-                horizontalAdjustments[i] = HorizontalAdjustment.Left;
+                horizontalAlignments[i] = HorizontalAlignment.Left;
             }
         }
 
-        if (columnInnerWidths.Length != horizontalAdjustments.Length)
+        if (columnInnerWidths.Length != horizontalAlignments.Length)
         {
             throw new ArgumentException("Number of columns must be equal to number of adjustments");
         }
@@ -39,7 +39,7 @@ internal sealed class TableBuilder
             _columnOuterWidths[i] = columnInnerWidths[i] + HorizontalPadding;
         }
 
-        _horizontalAdjustments = horizontalAdjustments;
+        _horizontalAlignments = horizontalAlignments;
     }
 
     public TableBuilder AppendTop()
@@ -106,7 +106,7 @@ internal sealed class TableBuilder
         {
             var content = cells[i];
             var columnInnerWidth = _columnInnerWidths[i];
-            var adjustment = _horizontalAdjustments[i];
+            var adjustment = _horizontalAlignments[i];
 
             var topPadding = (rowInnerHeight - content.Length) / 2;
             var bottomPadding = rowInnerHeight - topPadding - content.Length;
@@ -125,7 +125,7 @@ internal sealed class TableBuilder
                 var line = content[j - topPadding].Trim();
 
                 paddedContent[j] =
-                    adjustment == HorizontalAdjustment.Right
+                    adjustment == HorizontalAlignment.Right
                         ? new StringBuilder()
                             .Append(' ', columnInnerWidth - line.Length)
                             .Append(line)

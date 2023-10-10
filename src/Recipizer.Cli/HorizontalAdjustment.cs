@@ -1,6 +1,6 @@
 namespace Recipizer.Cli;
 
-internal enum HorizontalAdjustment
+internal enum HorizontalAlignment
 {
     Left,
     Right,

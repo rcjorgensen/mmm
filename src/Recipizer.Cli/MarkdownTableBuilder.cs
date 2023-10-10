@@ -6,27 +6,26 @@ internal sealed class MarkdownTableBuilder
 {
     private readonly StringBuilder _sb = new();
     private readonly int[] _columnWidths;
-    private readonly HorizontalAdjustment[] _horizontalAdjustments;
-    private const int HorizontalPadding = 2;
+    private readonly HorizontalAlignment[] _horizontalAlignments;
     private const int MinimumColumnWidth = 4;
 
     public MarkdownTableBuilder(
         int[] columnWidths,
-        HorizontalAdjustment[]? horizontalAdjustments = null
+        HorizontalAlignment[]? horizontalAlignments = null
     )
     {
-        if (horizontalAdjustments == null)
+        if (horizontalAlignments == null)
         {
-            horizontalAdjustments = new HorizontalAdjustment[columnWidths.Length];
-            horizontalAdjustments[0] = HorizontalAdjustment.Right;
+            horizontalAlignments = new HorizontalAlignment[columnWidths.Length];
+            horizontalAlignments[0] = HorizontalAlignment.Right;
 
-            for (int i = 1; i < horizontalAdjustments.Length; i++)
+            for (int i = 1; i < horizontalAlignments.Length; i++)
             {
-                horizontalAdjustments[i] = HorizontalAdjustment.Left;
+                horizontalAlignments[i] = HorizontalAlignment.Left;
             }
         }
 
-        if (columnWidths.Length != horizontalAdjustments.Length)
+        if (columnWidths.Length != horizontalAlignments.Length)
         {
             throw new ArgumentException("Number of columns must be equal to number of adjustments");
         }
@@ -38,18 +37,18 @@ internal sealed class MarkdownTableBuilder
             _columnWidths[i] = columnWidths[i] + Math.Max(0, MinimumColumnWidth - columnWidths[i]);
         }
 
-        _horizontalAdjustments = horizontalAdjustments;
+        _horizontalAlignments = horizontalAlignments;
     }
 
     public MarkdownTableBuilder AppendSeparator()
     {
         for (int i = 0; i < _columnWidths.Length; i++)
         {
-            if (_horizontalAdjustments[i] == HorizontalAdjustment.NotSpecified)
+            if (_horizontalAlignments[i] == HorizontalAlignment.NotSpecified)
             {
                 _sb.Append('|').Append(' ').Append('-', _columnWidths[i]).Append(' ');
             }
-            else if (_horizontalAdjustments[i] == HorizontalAdjustment.Left)
+            else if (_horizontalAlignments[i] == HorizontalAlignment.Left)
             {
                 _sb.Append('|')
                     .Append(' ')
@@ -57,7 +56,7 @@ internal sealed class MarkdownTableBuilder
                     .Append('-', _columnWidths[i] - 1)
                     .Append(' ');
             }
-            else if (_horizontalAdjustments[i] == HorizontalAdjustment.Right)
+            else if (_horizontalAlignments[i] == HorizontalAlignment.Right)
             {
                 _sb.Append('|')
                     .Append(' ')
@@ -65,7 +64,7 @@ internal sealed class MarkdownTableBuilder
                     .Append(':')
                     .Append(' ');
             }
-            else if (_horizontalAdjustments[i] == HorizontalAdjustment.Center)
+            else if (_horizontalAlignments[i] == HorizontalAlignment.Center)
             {
                 _sb.Append('|')
                     .Append(' ')

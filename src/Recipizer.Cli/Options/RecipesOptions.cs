@@ -46,4 +46,7 @@ internal sealed class RecipesOptions
 
     [Option("id", SetName = "remove")]
     public long Id { get; set; }
+
+    [Option("markdown")]
+    public bool Markdown { get; set; }
 }

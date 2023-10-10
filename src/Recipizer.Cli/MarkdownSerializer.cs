@@ -2,7 +2,7 @@ using Recipizer.Cli.Models;
 
 namespace Recipizer.Cli;
 
-internal static class Serializer
+internal static class MarkdownSerializer
 {
     public static string SerializeRecipes(IEnumerable<RecipeListModel> recipes)
     {
@@ -30,9 +30,8 @@ internal static class Serializer
             recipes.Select(x => x.Details.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var tb = new TableBuilder(columnInnerWidths);
+        var tb = new MarkdownTableBuilder(columnInnerWidths);
 
-        tb.AppendTop();
         tb.AppendRow(idHeader, nameHeader, detailsHeader);
         tb.AppendSeparator();
 
@@ -42,8 +41,6 @@ internal static class Serializer
 
             tb.AppendRow(recipeId, recipe.Name, recipe.Details);
         }
-
-        tb.AppendBottom();
 
         return tb.Build();
     }
@@ -55,7 +52,7 @@ internal static class Serializer
     {
         recipes = recipes.ToList();
 
-        var ingredientSubTables = new Dictionary<RecipeListModel, string[]>();
+        var ingredientSubTables = new Dictionary<RecipeListModel, string>();
         foreach (var recipe in recipes)
         {
             ingredientSubTables.Add(
@@ -63,14 +60,13 @@ internal static class Serializer
                 ingredientList switch
                 {
                     IngredientList.All
-                        => SerializeIngredientsWithAdded(recipe.AllIngredients)
-                            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
+                        => HtmlSerializer.SerializeIngredientsWithAdded(recipe.AllIngredients),
                     IngredientList.Missing
-                        => SerializeIngredients(recipe.MissingIngredients)
-                            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
+                        => HtmlSerializer.SerializeIngredients(recipe.MissingIngredients),
                     IngredientList.Inventory
-                        => SerializeIngredientsWithAdded(recipe.InventoryIngredients)
-                            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
+                        => HtmlSerializer.SerializeIngredientsWithAdded(
+                            recipe.InventoryIngredients
+                        ),
                     _ => throw new NotImplementedException()
                 }
             );
@@ -107,13 +103,11 @@ internal static class Serializer
 
         columnInnerWidths[3] = Math.Max(
             ingredientsHeader.Length,
-            (from x in ingredientSubTables.Values from y in x select y).MaxBy(i => i.Length)?.Length
-                ?? 0
+            ingredientSubTables.Values.MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var tb = new TableBuilder(columnInnerWidths);
+        var tb = new MarkdownTableBuilder(columnInnerWidths);
 
-        tb.AppendTop();
         tb.AppendRow(idHeader, nameHeader, detailsHeader, ingredientsHeader);
         tb.AppendSeparator();
 
@@ -121,15 +115,8 @@ internal static class Serializer
         {
             var recipeId = recipe.RecipeId.ToString();
 
-            tb.AppendRow(
-                new[] { recipeId },
-                new[] { recipe.Name },
-                new[] { recipe.Details },
-                ingredientSubTables[recipe]
-            );
+            tb.AppendRow(recipeId, recipe.Name, recipe.Details, ingredientSubTables[recipe]);
         }
-
-        tb.AppendBottom();
 
         return tb.Build();
     }
@@ -154,9 +141,8 @@ internal static class Serializer
             ingredients.Select(x => x.Name.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var tb = new TableBuilder(columnInnerWidths);
+        var tb = new MarkdownTableBuilder(columnInnerWidths);
 
-        tb.AppendTop();
         tb.AppendRow(idHeader, nameHeader);
         tb.AppendSeparator();
 
@@ -166,8 +152,6 @@ internal static class Serializer
 
             tb.AppendRow(ingredientId, ingredient.Name);
         }
-
-        tb.AppendBottom();
 
         return tb.Build();
     }
@@ -198,11 +182,9 @@ internal static class Serializer
             inventory.Select(x => x.Added.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var tb = new TableBuilder(columnInnerWidths);
-        tb.AppendTop();
+        var tb = new MarkdownTableBuilder(columnInnerWidths);
 
         tb.AppendRow(idHeader, nameHeader, addedHeader);
-
         tb.AppendSeparator();
 
         foreach (var ingredient in inventory)
@@ -211,8 +193,6 @@ internal static class Serializer
 
             tb.AppendRow(ingredientId, ingredient.Name, ingredient.Added);
         }
-
-        tb.AppendBottom();
 
         return tb.Build();
     }
