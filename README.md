@@ -232,4 +232,5 @@ dotnet run -- ingredients --inventory
 - [ ] List ingredients with recipes where they are used and order by most used
 - [ ] Serialize to markdown
 - [ ] Output a report in markdown
+- [ ] Publish pre-built binary
 - [X] Improve serializer multiline support for tables
