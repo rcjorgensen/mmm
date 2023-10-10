@@ -195,6 +195,49 @@
         "Pita bread",
         "Gouda cheese"
       ]
+    },
+    {
+      "name": "Chickpea Wrap",
+      "details": "p. 60",
+      "ingredients": [
+        "Olive oil",
+        "Canned chickpea",
+        "Garlic",
+        "Ground cumin",
+        "Smoked paprika",
+        "Dried thyme",
+        "Garlic powder",
+        "Salt",
+        "Black pepper",
+        "Cilantro",
+        "Parsley",
+        "Red chile",
+        "Lemon",
+        "Tortilla",
+        "Greek yogurt"
+      ]
+    },
+    {
+      "name": "Tastiest Chicken Lunch Wrap",
+      "details": "p. 63",
+      "ingredients": [
+        "Chicken",
+        "Garlic",
+        "Salt",
+        "Black pepper",
+        "Smoked paprika",
+        "Garlic powder",
+        "Ground tumeric",
+        "Lemon",
+        "Olive oil",
+        "Greek yogurt",
+        "Mayonnaise",
+        "Cilantro",
+        "Tortilla",
+        "Tomato",
+        "Red cabbage",
+        "Pickled red onion"
+      ]
     }
   ]
 }
