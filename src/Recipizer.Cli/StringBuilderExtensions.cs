@@ -55,117 +55,72 @@ internal static class StringBuilderExtensions
         return sb;
     }
 
-    public static StringBuilder AppendRowFirstColumnRightAdjusted(
+    public static StringBuilder AppendRow(
         this StringBuilder sb,
-        params (int, string)[] columnInnerWidthsAndContent
+        params (int, string[], bool)[] columnInnerWidthsAndContent
     )
     {
-        var (firstWidth, firstContent) = columnInnerWidthsAndContent.First();
-        var last = columnInnerWidthsAndContent.Skip(1);
+        // Find row inner height - just max length of string[]s
+        var rowInnerHeight = columnInnerWidthsAndContent.Select(x => x.Item2.Length).Max();
 
-        sb.Append('│').Append(' ');
-
-        sb.Append(' ', InnerPadding(firstWidth, firstContent))
-            .Append(firstContent)
-            .Append(' ')
-            .Append('│');
-
-        foreach (var (innerWidth, content) in last)
+        // Center adjust all cells by padding with empty lines above and below
+        var paddedContents = new List<string[]>();
+        foreach (var (columnInnerWidth, content, rightAdjust) in columnInnerWidthsAndContent)
         {
-            sb.Append(' ')
-                .Append(content)
-                .Append(' ', InnerPadding(innerWidth, content))
-                .Append(' ')
-                .Append('│');
+            var topPadding = (rowInnerHeight - content.Length) / 2;
+            var bottomPadding = rowInnerHeight - topPadding - content.Length;
+
+            var paddedContent = new string[rowInnerHeight];
+
+            var emptyLine = new StringBuilder().Append(' ', columnInnerWidth).ToString();
+
+            for (int i = 0; i < topPadding; i++)
+            {
+                paddedContent[i] = emptyLine;
+            }
+
+            for (int i = topPadding; i < topPadding + content.Length; i++)
+            {
+                var line = content[i - topPadding].Trim(); // Let's trim to make sure there are no newlines, it's fine to trim all whitespace in doing so
+
+                // Left adjust everything for now - later we'll use a flag or something to right or left adjust
+                if (rightAdjust)
+                {
+                    paddedContent[i] = new StringBuilder()
+                        .Append(' ', columnInnerWidth - line.Length)
+                        .Append(line)
+                        .ToString();
+                }
+                else
+                {
+                    paddedContent[i] = new StringBuilder()
+                        .Append(line)
+                        .Append(' ', columnInnerWidth - line.Length)
+                        .ToString();
+                }
+            }
+
+            for (
+                int i = topPadding + content.Length;
+                i < topPadding + content.Length + bottomPadding;
+                i++
+            )
+            {
+                paddedContent[i] = emptyLine;
+            }
+
+            paddedContents.Add(paddedContent);
         }
 
-        return sb.AppendLine();
-    }
-
-    public static StringBuilder AppendRowFirstColumnRightAdjustedLastColumnMultiline(
-        this StringBuilder sb,
-        (int, string) firstColumnInnerWidthsAndContent,
-        (int, string) secondColumnInnerWidthsAndContent,
-        (int, string) thirdColumnInnerWidthsAndContent,
-        (int, string[]) fourthColumnInnerWidthsAndContent
-    )
-    {
-        var (firstWidth, firstContent) = firstColumnInnerWidthsAndContent;
-        var (secondWidth, secondContent) = secondColumnInnerWidthsAndContent;
-        var (thirdWidth, thirdContent) = thirdColumnInnerWidthsAndContent;
-        var (fourthWidth, fourthContent) = fourthColumnInnerWidthsAndContent;
-
-        var fourthContentTop = fourthContent.Take(fourthContent.Length / 2 + 1);
-        var fourthContentMiddle = fourthContent.Skip(fourthContent.Length / 2 + 1).Take(1).Single();
-        var fourthContentBottom = fourthContent.Skip(fourthContent.Length / 2 + 1).Skip(1);
-
-        foreach (var line in fourthContentTop)
+        for (int i = 0; i < rowInnerHeight; i++)
         {
-            sb.Append('│')
-                .Append(' ')
-                .Append(' ', firstWidth)
-                .Append(' ')
-                .Append('│')
-                .Append(' ')
-                .Append(' ', secondWidth)
-                .Append(' ')
-                .Append('│')
-                .Append(' ')
-                .Append(' ', thirdWidth)
-                .Append(' ')
-                .Append('│')
-                .Append(' ')
-                .Append(line)
-                .Append(' ', InnerPadding(fourthWidth, line))
-                .Append(' ')
-                .Append('│')
-                .AppendLine();
-        }
+            var cells = from x in paddedContents select x[i];
+            foreach (var cell in cells)
+            {
+                sb.Append('│').Append(' ').Append(cell).Append(' ');
+            }
 
-        sb.Append('│')
-            .Append(' ')
-            .Append(' ', InnerPadding(firstWidth, firstContent))
-            .Append(firstContent)
-            .Append(' ')
-            .Append('│')
-            .Append(' ')
-            .Append(secondContent)
-            .Append(' ', InnerPadding(secondWidth, secondContent))
-            .Append(' ')
-            .Append('│')
-            .Append(' ')
-            .Append(thirdContent)
-            .Append(' ', InnerPadding(thirdWidth, thirdContent))
-            .Append(' ')
-            .Append('│')
-            .Append(' ')
-            .Append(fourthContentMiddle)
-            .Append(' ', InnerPadding(fourthWidth, fourthContentMiddle))
-            .Append(' ')
-            .Append('│')
-            .AppendLine();
-
-        foreach (var line in fourthContentBottom)
-        {
-            sb.Append('│')
-                .Append(' ')
-                .Append(' ', firstWidth)
-                .Append(' ')
-                .Append('│')
-                .Append(' ')
-                .Append(' ', secondWidth)
-                .Append(' ')
-                .Append('│')
-                .Append(' ')
-                .Append(' ', thirdWidth)
-                .Append(' ')
-                .Append('│')
-                .Append(' ')
-                .Append(line)
-                .Append(' ', InnerPadding(fourthWidth, line))
-                .Append(' ')
-                .Append('│')
-                .AppendLine();
+            sb.Append('│').AppendLine();
         }
 
         return sb;
@@ -173,21 +128,15 @@ internal static class StringBuilderExtensions
 
     public static StringBuilder AppendRow(
         this StringBuilder sb,
-        params (int, string)[] columnInnerWidthsAndContent
+        params (int, string, bool)[] columnInnerWidthsAndContent
     )
     {
-        sb.Append('│');
-
-        foreach (var (innerWidth, content) in columnInnerWidthsAndContent)
-        {
-            sb.Append(' ')
-                .Append(content)
-                .Append(' ', InnerPadding(innerWidth, content))
-                .Append(' ')
-                .Append('│');
-        }
-
-        return sb.AppendLine();
+        return sb.AppendRow(
+            (
+                from x in columnInnerWidthsAndContent
+                select (x.Item1, new[] { x.Item2 }, x.Item3)
+            ).ToArray()
+        );
     }
 
     private static int InnerPadding(int innerWidth, string content) =>

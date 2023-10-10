@@ -36,10 +36,10 @@ internal sealed class Serializer
         var sb = new StringBuilder();
         sb.AppendTop(idOuterWidth, nameOuterWidth, detailsOuterWidth);
 
-        sb.AppendRowFirstColumnRightAdjusted(
-            (idInnerWidth, idHeader),
-            (nameInnerWidth, nameHeader),
-            (detailsInnerWidth, detailsHeader)
+        sb.AppendRow(
+            (idInnerWidth, idHeader, true),
+            (nameInnerWidth, nameHeader, false),
+            (detailsInnerWidth, detailsHeader, false)
         );
 
         sb.AppendSeparator(idOuterWidth, nameOuterWidth, detailsOuterWidth);
@@ -48,10 +48,10 @@ internal sealed class Serializer
         {
             var recipeId = recipe.RecipeId.ToString();
 
-            sb.AppendRowFirstColumnRightAdjusted(
-                (idInnerWidth, recipeId),
-                (nameInnerWidth, recipe.Name),
-                (detailsInnerWidth, recipe.Details)
+            sb.AppendRow(
+                (idInnerWidth, recipeId, true),
+                (nameInnerWidth, recipe.Name, false),
+                (detailsInnerWidth, recipe.Details, false)
             );
         }
 
@@ -131,11 +131,11 @@ internal sealed class Serializer
         var sb = new StringBuilder();
         sb.AppendTop(idOuterWidth, nameOuterWidth, detailsOuterWidth, ingredientsOuterWidth);
 
-        sb.AppendRowFirstColumnRightAdjusted(
-            (idInnerWidth, idHeader),
-            (nameInnerWidth, nameHeader),
-            (detailsInnerWidth, detailsHeader),
-            (ingredientsInnerWidth, ingredientsHeader)
+        sb.AppendRow(
+            (idInnerWidth, idHeader, true),
+            (nameInnerWidth, nameHeader, false),
+            (detailsInnerWidth, detailsHeader, false),
+            (ingredientsInnerWidth, ingredientsHeader, false)
         );
 
         sb.AppendSeparator(idOuterWidth, nameOuterWidth, detailsOuterWidth, ingredientsOuterWidth);
@@ -144,11 +144,11 @@ internal sealed class Serializer
         {
             var recipeId = recipe.RecipeId.ToString();
 
-            sb.AppendRowFirstColumnRightAdjustedLastColumnMultiline(
-                (idInnerWidth, recipeId),
-                (nameInnerWidth, recipe.Name),
-                (detailsInnerWidth, recipe.Details),
-                (ingredientsInnerWidth, ingredientSubTables[recipe])
+            sb.AppendRow(
+                (idInnerWidth, new[] { recipeId }, true),
+                (nameInnerWidth, new[] { recipe.Name }, false),
+                (detailsInnerWidth, new[] { recipe.Details }, false),
+                (ingredientsInnerWidth, ingredientSubTables[recipe], false)
             );
         }
 
@@ -182,10 +182,7 @@ internal sealed class Serializer
         var sb = new StringBuilder();
         sb.AppendTop(idOuterWidth, nameOuterWidth);
 
-        sb.AppendRowFirstColumnRightAdjusted(
-            (idInnerWidth, idHeader),
-            (nameInnerWidth, nameHeader)
-        );
+        sb.AppendRow((idInnerWidth, idHeader, true), (nameInnerWidth, nameHeader, false));
 
         sb.AppendSeparator(idOuterWidth, nameOuterWidth);
 
@@ -193,9 +190,9 @@ internal sealed class Serializer
         {
             var ingredientId = ingredient.IngredientId.ToString();
 
-            sb.AppendRowFirstColumnRightAdjusted(
-                (idInnerWidth, ingredientId),
-                (nameInnerWidth, ingredient.Name)
+            sb.AppendRow(
+                (idInnerWidth, ingredientId, true),
+                (nameInnerWidth, ingredient.Name, false)
             );
         }
 
@@ -236,10 +233,10 @@ internal sealed class Serializer
         var sb = new StringBuilder();
         sb.AppendTop(idOuterWidth, nameOuterWidth, addedOuterWidth);
 
-        sb.AppendRowFirstColumnRightAdjusted(
-            (idInnerWidth, idHeader),
-            (nameInnerWidth, nameHeader),
-            (addedInnerWidth, addedHeader)
+        sb.AppendRow(
+            (idInnerWidth, idHeader, true),
+            (nameInnerWidth, nameHeader, false),
+            (addedInnerWidth, addedHeader, false)
         );
 
         sb.AppendSeparator(idOuterWidth, nameOuterWidth, addedOuterWidth);
@@ -248,10 +245,10 @@ internal sealed class Serializer
         {
             var ingredientId = ingredient.IngredientId.ToString();
 
-            sb.AppendRowFirstColumnRightAdjusted(
-                (idInnerWidth, ingredientId),
-                (nameInnerWidth, ingredient.Name),
-                (addedInnerWidth, ingredient.Added)
+            sb.AppendRow(
+                (idInnerWidth, ingredientId, true),
+                (nameInnerWidth, ingredient.Name, false),
+                (addedInnerWidth, ingredient.Added, false)
             );
         }
 

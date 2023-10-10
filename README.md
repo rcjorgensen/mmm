@@ -228,5 +228,7 @@ dotnet run -- ingredients --inventory
 # Roadmap
 
 - Add more recipes
+- Improve serializer multiline support for tables
 - Prioritize recipes with perishable ingredients in inventory
 - List ingredients with recipes where they are used and order by most used
+- Output a report in markdown
