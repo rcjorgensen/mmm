@@ -55,6 +55,18 @@ internal sealed class Application
 
         var data = await _fileSystem.ReadAllTextAsync(dataFilePath);
 
+        var labels = _deserializer.DeserializeLabels(data);
+
+        if (labels == null)
+        {
+            return "ERROR: Could not read labels";
+        }
+
+        foreach (var label in labels)
+        {
+            await _repository.CreateLabel(label);
+        }
+
         var recipes = _deserializer.DeserializeRecipes(data);
 
         if (recipes == null)

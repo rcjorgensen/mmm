@@ -23,4 +23,13 @@ internal sealed class Deserializer
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
             );
     }
+
+    public string[]? DeserializeLabels(string data)
+    {
+        return JsonNode
+            .Parse(data)
+            ?["labels"].Deserialize<string[]>(
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+            );
+    }
 }

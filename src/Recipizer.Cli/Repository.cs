@@ -32,6 +32,20 @@ internal sealed class Repository
         );
     }
 
+    internal Task<long> CreateLabel(string label)
+    {
+        return connection.QuerySingleAsync<long>(
+            """
+                INSERT INTO label
+                    (label)
+                VALUES 
+                    (@label)
+                RETURNING label_id
+                """,
+            new { label, }
+        );
+    }
+
     public Task<long> CreateRecipe(string name, string? details = null, long? recipeSourceId = null)
     {
         return connection.QuerySingleAsync<long>(

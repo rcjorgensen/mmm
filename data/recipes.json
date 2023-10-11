@@ -1,5 +1,6 @@
 {
   "recipeSource": "Tasty. Healthy. Cheap.",
+  "labels": ["Perishable"],
   "recipes": [
     {
       "name": "Superior Avocado Toast",
@@ -237,6 +238,42 @@
         "Tomato",
         "Red cabbage",
         "Pickled red onion"
+      ]
+    },
+    {
+      "name": "Tuna Melt Quesadilla",
+      "details": "p. 64",
+      "ingredients": [
+        "Water-packed tuna",
+        "Mayonnaise",
+        "Red onion",
+        "Garlic",
+        "Parsley",
+        "Capers",
+        "Olive oil",
+        "Salt",
+        "Black pepper",
+        "Tortilla",
+        "Cheddar cheese"
+      ]
+    },
+    {
+      "name": "The Gourmet Egg Salad Bagel",
+      "details": "p. 67",
+      "ingredients": [
+        "Egg",
+        "Mayonnaise",
+        "Greek yogurt",
+        "Dijon mustard",
+        "White vinegar",
+        "Celery",
+        "Dill",
+        "Parsley",
+        "Chives",
+        "Salt",
+        "Black pepper",
+        "Olive oil",
+        "Sesame seed bagel"
       ]
     }
   ]
