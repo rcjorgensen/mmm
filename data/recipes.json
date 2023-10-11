@@ -275,6 +275,49 @@
         "Olive oil",
         "Sesame seed bagel"
       ]
+    },
+    {
+      "name": "Crispy Chickpea Sweet Potato Salad",
+      "details": "p. 68",
+      "ingredients": [
+        "Salt",
+        "Smoked paprika",
+        "Ground cumin",
+        "Garlic powder",
+        "Ground ginger",
+        "Canned chickpea",
+        "Olive oil",
+        "Sweet potato",
+        "Parsley",
+        "Greek yogurt",
+        "Tahini",
+        "Garlic",
+        "Cilantro",
+        "Lime",
+        "Honey",
+        "Corn salad"
+      ]
+    },
+    {
+      "name": "My Ultimate Chicken Taco Salad",
+      "details": "p. 71",
+      "ingredients": [
+        "Avocado",
+        "Greek yogurt",
+        "Olive oil",
+        "Lime",
+        "Garlic",
+        "Salt",
+        "Black pepper",
+        "Chicken",
+        "Taco seasoning",
+        "Tortilla",
+        "Baby romaine lettuce",
+        "Corn",
+        "Scallion",
+        "Roma tomato",
+        "Cilantro"
+      ]
     }
   ]
 }
