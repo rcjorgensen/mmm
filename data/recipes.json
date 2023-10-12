@@ -318,6 +318,26 @@
         "Roma tomato",
         "Cilantro"
       ]
+    },
+    {
+      "name": "Mediterranean Pasta Salad",
+      "details": "p. 75",
+      "ingredients": [
+        "Red wine vinegar",
+        "Olive oil",
+        "Lemon",
+        "Thyme",
+        "Salt",
+        "Black pepper",
+        "Pasta",
+        "Parsley",
+        "Cherry tomato",
+        "Red onion",
+        "Cucumber",
+        "Feta cheese",
+        "Olives",
+        "Capers"
+      ]
     }
   ]
 }
