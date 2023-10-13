@@ -6,30 +6,43 @@
 
 ## Ubuntu
 
-### Install .NET
+### Install requirements
 
-```zsh
+#### .NET
+
+```sh
 sudo apt-get install dotnet-sdk-7.0
 ```
 
-### Install SQLite
+#### SQLite
 
-```zsh
+```sh
 sudo apt-get install sqlite3
+```
+
+### Install recipizer globally
+
+```sh
+sh ./install.sh
+```
+
+After installation set the path to the install dir as an environment variable e.g. in your .zshrc or similar and add it to the PATH to be able to execute it from anywhere.
+
+```sh
+export RECIPIZER_INSTALL_DIR="$HOME/.local/bin/recipizer"
+export PATH="$RECIPIZER_INSTALL_DIR:$PATH"
 ```
 
 ### Intialize database
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- init [--force]
+```sh
+recipizer init [-f|--force]
 ```
 
 ### List recipes
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- recipes --list --match %Banana%
+```sh
+recipizer recipes --list --match %Banana%
 
 ┌────┬─────────────────────────────────┬─────────┐
 │ Id │ Name                            │ Details │
@@ -41,9 +54,8 @@ dotnet run -- recipes --list --match %Banana%
 
 #### List recipes with ingredients
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- recipes --list --with-ingredients --by-fewest-missing --take 2
+```sh
+recipizer recipes --list --with-ingredients --by-fewest-missing --take 2
 
 ┌────┬─────────────────────────────────┬─────────┬────────────────────────────────────────┐
 │ Id │ Name                            │ Details │ Ingredients                            │
@@ -84,9 +96,8 @@ dotnet run -- recipes --list --with-ingredients --by-fewest-missing --take 2
 
 #### List recipes with missing ingredients
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- recipes --list --match %Avocado% --with-missing-ingredients
+```sh
+recipizer recipes --list --match %Avocado% --with-missing-ingredients
 
 ┌────┬────────────────────────┬─────────┬─────────────────────┐
 │ Id │ Name                   │ Details │ Ingredients missing │
@@ -105,9 +116,8 @@ dotnet run -- recipes --list --match %Avocado% --with-missing-ingredients
 
 #### List recipes with ingredients in inventory
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- recipes --list --take 2 --with-inventory-ingredients
+```sh
+recipizer recipes --list --take 2 --with-inventory-ingredients
 
 ┌────┬───────────────────────────────────┬─────────┬────────────────────────────────────┐
 │ Id │ Name                              │ Details │ Ingredients in inventory           │
@@ -139,9 +149,8 @@ dotnet run -- recipes --list --take 2 --with-inventory-ingredients
 
 ### List ingredients
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- ingredients --list --match %Egg%
+```sh
+recipizer ingredients --list --match %Egg%
 
 ┌────┬──────────┐
 │ Id │ Name     │
@@ -155,9 +164,8 @@ dotnet run -- ingredients --list --match %Egg%
 
 #### List ingredients missing from inventory
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- ingredients --missing
+```sh
+recipizer ingredients --missing
 
 ┌────┬───────────────────┐
 │ Id │ Name              │
@@ -173,9 +181,8 @@ dotnet run -- ingredients --missing
 
 #### Add ingredients to inventory
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- ingredients --add --to-inventory 40 47 55
+```sh
+recipizer ingredients --add --to-inventory 40 47 55
 
 ┌────┬──────────────────┬────────────┐
 │ Id │ Name             │ Added      │
@@ -193,9 +200,8 @@ dotnet run -- ingredients --add --to-inventory 40 47 55
 
 #### Remove ingredients from inventory
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- ingredients --remove --from-inventory 40 47 55
+```sh
+recipizer ingredients --remove --from-inventory 40 47 55
 
 ┌────┬──────────────────┬────────────┐
 │ Id │ Name             │ Added      │
@@ -210,9 +216,8 @@ dotnet run -- ingredients --remove --from-inventory 40 47 55
 
 #### List ingredients in inventory
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- ingredients --inventory
+```sh
+recipizer ingredients --inventory
 
 ┌────┬──────────────────┬────────────┐
 │ Id │ Name             │ Added      │
@@ -231,9 +236,8 @@ This is an experimental feature that will only work in some cases.
 
 It might be helpful later on for creating reports with multiple tables.
 
-```zsh
-cd src/Recipizer.Cli
-dotnet run -- recipes --list --with-ingredients --by-fewest-missing --take 2 --markdown > OUTPUT.md
+```sh
+recipizer recipes --list --with-ingredients --by-fewest-missing --take 2 --markdown > OUTPUT.md
 ```
 
 |  Id | Name                            | Details | Ingredients                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                       |
@@ -249,7 +253,7 @@ dotnet run -- recipes --list --with-ingredients --by-fewest-missing --take 2 --m
 - [ ] List ingredients with recipes where they are used and order by most used
 - [x] Serialize to markdown
 - [ ] Output a report in markdown
-- [ ] Use Makefile for publishing
+- [x] Add global installation script
 - [ ] Add e2e testing
 - [ ] Publish pre-built binary
 - [x] Improve serializer multiline support for tables
