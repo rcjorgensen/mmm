@@ -93,7 +93,7 @@
       "ingredients": [
         "Olive oil",
         "Onion",
-        "Red bell pepper",
+        "Bell pepper",
         "Green chile",
         "Garlic",
         "Cumin seed",
@@ -148,7 +148,7 @@
         "Garlic",
         "Green chile",
         "Cumin seed",
-        "Green bell pepper",
+        "Bell pepper",
         "Eggplant",
         "Canned chickpea",
         "Salt",
@@ -337,6 +337,44 @@
         "Feta cheese",
         "Olives",
         "Capers"
+      ]
+    },
+    {
+      "name": "Fresh Summer Quinoa Salad",
+      "details": "p. 76",
+      "ingredients": [
+        "Dijon mustard",
+        "Olive oil",
+        "White vinegar",
+        "Lemon",
+        "Honey",
+        "Quinoa",
+        "Arugula",
+        "Apple",
+        "Cucumber",
+        "Dried cranberry",
+        "Walnut",
+        "Mint"
+      ]
+    },
+    {
+      "name": "The Leftover Fried Rice",
+      "details": "p. 80",
+      "ingredients": [
+        "Egg",
+        "Salt",
+        "Onion",
+        "Scallion",
+        "Bell pepper",
+        "Garlic",
+        "Chicken",
+        "Rice",
+        "MSG",
+        "Frozen pea",
+        "Soy sauce",
+        "Oyster sauce",
+        "Rice vinegar",
+        "Sesame oil"
       ]
     }
   ]

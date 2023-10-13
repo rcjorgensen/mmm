@@ -249,5 +249,7 @@ dotnet run -- recipes --list --with-ingredients --by-fewest-missing --take 2 --m
 - [ ] List ingredients with recipes where they are used and order by most used
 - [x] Serialize to markdown
 - [ ] Output a report in markdown
+- [ ] Use Makefile for publishing
+- [ ] Add e2e testing
 - [ ] Publish pre-built binary
 - [x] Improve serializer multiline support for tables
