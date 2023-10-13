@@ -4,7 +4,25 @@ using Recipizer.Cli.Models;
 
 namespace Recipizer.Cli;
 
-internal sealed class Repository
+internal interface IRepository
+{
+    Task<int> InitializeSchema();
+    Task<long> CreateRecipeSource(string name);
+    Task<long> CreateLabel(string label);
+    Task<long> CreateRecipe(string name, string? details = null, long? recipeSourceId = null);
+    Task<long> GetOrCreateIngredient(string name);
+    Task AddIngredientToRecipe(long recipeId, long ingredientId);
+    Task<IEnumerable<RecipeListModel>> GetRecipes(string? match = null);
+    Task<IEnumerable<RecipeListModel>> GetRecipesWithIngredients(string? match = null);
+    Task DeleteRecipe(long id);
+    Task<IEnumerable<IngredientListModel>> GetIngredients(string? match = null);
+    Task<IEnumerable<IngredientListModel>> GetInventory(string? match = null);
+    Task<IEnumerable<IngredientListModel>> GetMissing(string? match);
+    Task CreateInventoryIngredient(long ingredientId);
+    Task DeleteInventoryIngredient(long ingredientId);
+}
+
+internal sealed class Repository : IRepository
 {
     private readonly SQLiteConnection connection;
 
@@ -13,12 +31,64 @@ internal sealed class Repository
         this.connection = connection;
     }
 
-    public Task<int> ExecuteRaw(string sql)
+    public Task<int> InitializeSchema()
     {
-        return connection.ExecuteAsync(sql);
+        return connection.ExecuteAsync(
+            """
+            CREATE TABLE IF NOT EXISTS recipe_source (
+                recipe_source_id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL UNIQUE
+            );
+            
+            CREATE TABLE IF NOT EXISTS recipe (
+                recipe_id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL UNIQUE,
+                recipe_source_id INTEGER,
+                details TEXT,
+                FOREIGN KEY (recipe_source_id) REFERENCES recipe_source (recipe_source_id)
+            );
+            
+            CREATE TABLE IF NOT EXISTS ingredient (
+                ingredient_id INTEGER PRIMARY KEY,
+                name TEXT NOT NULL UNIQUE
+            );
+            
+            CREATE TABLE IF NOT EXISTS inventory_ingredient (
+                ingredient_id INTEGER NOT NULL UNIQUE,
+                added TEXT DEFAULT CURRENT_DATE,
+                quantity INTEGER,
+                unit TEXT,
+                FOREIGN KEY (ingredient_id) REFERENCES ingredient (ingredient_id) ON DELETE CASCADE
+            );
+            
+            CREATE TABLE IF NOT EXISTS recipe_ingredient (
+                recipe_id INTEGER NOT NULL,
+                ingredient_id INTEGER NOT NULL,
+                quantity INTEGER,
+                unit TEXT,
+                details TEXT,
+                PRIMARY KEY (recipe_id, ingredient_id),
+                FOREIGN KEY (recipe_id) REFERENCES recipe (recipe_id) ON DELETE CASCADE,
+                FOREIGN KEY (ingredient_id) REFERENCES ingredient (ingredient_id) ON DELETE CASCADE
+            );
+            
+            CREATE TABLE IF NOT EXISTS label (
+                label_id INTEGER PRIMARY KEY,
+                label TEXT NOT NULL
+            );
+            
+            CREATE TABLE IF NOT EXISTS ingredient_label (
+                ingredient_id INTEGER NOT NULL,
+                label_id INTEGER NOT NULL,
+                PRIMARY KEY (ingredient_id, label_id),
+                FOREIGN KEY (ingredient_id) REFERENCES ingredient (ingredient_id) ON DELETE CASCADE,
+                FOREIGN KEY (label_id) REFERENCES label (label_id) ON DELETE CASCADE
+            );
+            """
+        );
     }
 
-    internal Task<long> CreateRecipeSource(string name)
+    public Task<long> CreateRecipeSource(string name)
     {
         return connection.QuerySingleAsync<long>(
             """
@@ -32,7 +102,7 @@ internal sealed class Repository
         );
     }
 
-    internal Task<long> CreateLabel(string label)
+    public Task<long> CreateLabel(string label)
     {
         return connection.QuerySingleAsync<long>(
             """
@@ -110,7 +180,7 @@ internal sealed class Repository
         );
     }
 
-    internal Task<IEnumerable<RecipeListModel>> GetRecipes(string? match = null)
+    public Task<IEnumerable<RecipeListModel>> GetRecipes(string? match = null)
     {
         return match != null
             ? connection.QueryAsync<RecipeListModel>(
@@ -135,9 +205,7 @@ internal sealed class Repository
             );
     }
 
-    internal async Task<IEnumerable<RecipeListModel>> GetRecipesWithIngredients(
-        string? match = null
-    )
+    public async Task<IEnumerable<RecipeListModel>> GetRecipesWithIngredients(string? match = null)
     {
         return match != null
             ? (
@@ -214,7 +282,7 @@ internal sealed class Repository
             });
     }
 
-    internal Task DeleteRecipe(long id)
+    public Task DeleteRecipe(long id)
     {
         return connection.ExecuteAsync(
             """
@@ -228,7 +296,7 @@ internal sealed class Repository
         );
     }
 
-    internal Task<IEnumerable<IngredientListModel>> GetIngredients(string? match = null)
+    public Task<IEnumerable<IngredientListModel>> GetIngredients(string? match = null)
     {
         return match != null
             ? connection.QueryAsync<IngredientListModel>(
@@ -257,7 +325,7 @@ internal sealed class Repository
             );
     }
 
-    internal Task<IEnumerable<IngredientListModel>> GetInventory(string? match = null)
+    public Task<IEnumerable<IngredientListModel>> GetInventory(string? match = null)
     {
         return match != null
             ? connection.QueryAsync<IngredientListModel>(
@@ -286,7 +354,7 @@ internal sealed class Repository
             );
     }
 
-    internal Task<IEnumerable<IngredientListModel>> GetMissing(string? match)
+    public Task<IEnumerable<IngredientListModel>> GetMissing(string? match)
     {
         return match != null
             ? connection.QueryAsync<IngredientListModel>(
@@ -313,7 +381,7 @@ internal sealed class Repository
             );
     }
 
-    internal Task CreateInventoryIngredient(long ingredientId)
+    public Task CreateInventoryIngredient(long ingredientId)
     {
         return connection.ExecuteAsync(
             """
@@ -326,7 +394,7 @@ internal sealed class Repository
         );
     }
 
-    internal Task DeleteInventoryIngredient(long ingredientId)
+    public Task DeleteInventoryIngredient(long ingredientId)
     {
         return connection.ExecuteAsync(
             """

@@ -6,31 +6,28 @@ namespace Recipizer.Cli;
 internal sealed class Application
 {
     private readonly Configuration _configuration;
-    private readonly Repository _repository;
-    private readonly FileSystem _fileSystem;
-    private readonly Deserializer _deserializer;
+    private readonly IRepository _repository;
+    private readonly IFileSystem _fileSystem;
+    private readonly IDeserializer _deserializer;
+    private readonly ISerializer _serializer;
 
     public Application(
         Configuration configuration,
-        Repository repository,
-        FileSystem fileSystem,
-        Deserializer deserializer
+        IRepository repository,
+        IFileSystem fileSystem,
+        IDeserializer deserializer,
+        ISerializer serializer
     )
     {
         _configuration = configuration;
         _repository = repository;
         _fileSystem = fileSystem;
         _deserializer = deserializer;
+        _serializer = serializer;
     }
 
     public async Task<string> Init(InitOptions options)
     {
-        var schemaFilePath = _configuration.SchemaFilePath;
-        if (schemaFilePath == null)
-        {
-            return "ERROR: Could not get schema file from configuration";
-        }
-
         var databaseFilePath = _configuration.DatabaseFilePath;
         if (databaseFilePath == null)
         {
@@ -49,11 +46,12 @@ internal sealed class Application
             _fileSystem.Create(databaseFilePath);
         }
 
-        var schema = await _fileSystem.ReadAllTextAsync(schemaFilePath);
+        await _repository.InitializeSchema();
 
-        await _repository.ExecuteRaw(schema);
+        Console.WriteLine($"Data file path: {Path.GetFullPath(dataFilePath)}");
+        Console.WriteLine($"Current directory: {Directory.GetCurrentDirectory()}");
 
-        var data = await _fileSystem.ReadAllTextAsync(dataFilePath);
+        var data = await _fileSystem.ReadAllText(dataFilePath);
 
         var labels = _deserializer.DeserializeLabels(data);
 
@@ -149,7 +147,7 @@ internal sealed class Application
                         recipes,
                         IngredientList.All
                     )
-                    : Serializer.SerializeRecipesWithIngredients(recipes, IngredientList.All);
+                    : _serializer.SerializeRecipesWithIngredients(recipes, IngredientList.All);
             }
 
             if (options.WithMissingIngredients)
@@ -185,7 +183,7 @@ internal sealed class Application
                         recipes,
                         IngredientList.Missing
                     )
-                    : Serializer.SerializeRecipesWithIngredients(recipes, IngredientList.Missing);
+                    : _serializer.SerializeRecipesWithIngredients(recipes, IngredientList.Missing);
             }
 
             if (options.WithInventoryIngredients)
@@ -221,7 +219,10 @@ internal sealed class Application
                         recipes,
                         IngredientList.Inventory
                     )
-                    : Serializer.SerializeRecipesWithIngredients(recipes, IngredientList.Inventory);
+                    : _serializer.SerializeRecipesWithIngredients(
+                        recipes,
+                        IngredientList.Inventory
+                    );
             }
 
             var recipesFallBack = await _repository.GetRecipes(options.Match);
@@ -233,7 +234,7 @@ internal sealed class Application
 
             return options.Markdown
                 ? MarkdownSerializer.SerializeRecipes(recipesFallBack)
-                : Serializer.SerializeRecipes(recipesFallBack);
+                : _serializer.SerializeRecipes(recipesFallBack);
         }
 
         if (options.Add)
@@ -247,7 +248,7 @@ internal sealed class Application
             var newRecipe = (from r in recipes where r.RecipeId == id select r).Single();
             newRecipe.Name += "*";
 
-            return Serializer.SerializeRecipes(recipes);
+            return _serializer.SerializeRecipes(recipes);
         }
 
         if (options.Remove)
@@ -256,10 +257,10 @@ internal sealed class Application
 
             await _repository.DeleteRecipe(id);
 
-            return Serializer.SerializeRecipes(await _repository.GetRecipes());
+            return _serializer.SerializeRecipes(await _repository.GetRecipes());
         }
 
-        return Serializer.SerializeRecipes(await _repository.GetRecipes(options.Match));
+        return _serializer.SerializeRecipes(await _repository.GetRecipes(options.Match));
     }
 
     internal async Task<string> Ingredients(IngredientsOptions options)
@@ -277,19 +278,19 @@ internal sealed class Application
 
         if (options.List)
         {
-            return Serializer.SerializeIngredientsWithAdded(
+            return _serializer.SerializeIngredientsWithAdded(
                 await _repository.GetIngredients(options.Match)
             );
         }
 
         if (options.Missing)
         {
-            return Serializer.SerializeIngredients(await _repository.GetMissing(options.Match));
+            return _serializer.SerializeIngredients(await _repository.GetMissing(options.Match));
         }
 
         if (options.Inventory)
         {
-            return Serializer.SerializeIngredientsWithAdded(
+            return _serializer.SerializeIngredientsWithAdded(
                 await _repository.GetInventory(options.Match)
             );
         }
@@ -301,7 +302,7 @@ internal sealed class Application
                 await _repository.DeleteInventoryIngredient(ingredientId);
             }
 
-            return Serializer.SerializeIngredientsWithAdded(await _repository.GetInventory());
+            return _serializer.SerializeIngredientsWithAdded(await _repository.GetInventory());
         }
 
         if (options.Add)
@@ -324,10 +325,10 @@ internal sealed class Application
                 newIngredient.Name += "*";
             }
 
-            return Serializer.SerializeIngredientsWithAdded(inventory);
+            return _serializer.SerializeIngredientsWithAdded(inventory);
         }
 
-        return Serializer.SerializeIngredientsWithAdded(
+        return _serializer.SerializeIngredientsWithAdded(
             await _repository.GetIngredients(options.Match)
         );
     }

@@ -4,7 +4,14 @@ using Recipizer.Cli.Models;
 
 namespace Recipizer.Cli;
 
-internal sealed class Deserializer
+internal interface IDeserializer
+{
+    List<RecipeInitModel>? DeserializeRecipes(string data);
+    string? DeserializeRecipeSource(string data);
+    string[]? DeserializeLabels(string data);
+}
+
+internal sealed class Deserializer : IDeserializer
 {
     public List<RecipeInitModel>? DeserializeRecipes(string data)
     {

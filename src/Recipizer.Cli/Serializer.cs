@@ -2,9 +2,20 @@ using Recipizer.Cli.Models;
 
 namespace Recipizer.Cli;
 
-internal static class Serializer
+internal interface ISerializer
 {
-    public static string SerializeRecipes(IEnumerable<RecipeListModel> recipes)
+    string SerializeRecipes(IEnumerable<RecipeListModel> recipes);
+    string SerializeRecipesWithIngredients(
+        IEnumerable<RecipeListModel> recipes,
+        IngredientList ingredientList = IngredientList.All
+    );
+    string SerializeIngredients(IEnumerable<IngredientListModel> ingredients);
+    string SerializeIngredientsWithAdded(IEnumerable<IngredientListModel> inventory);
+}
+
+internal sealed class Serializer : ISerializer
+{
+    public string SerializeRecipes(IEnumerable<RecipeListModel> recipes)
     {
         recipes = recipes.ToList();
 
@@ -48,7 +59,7 @@ internal static class Serializer
         return tb.Build();
     }
 
-    internal static string SerializeRecipesWithIngredients(
+    public string SerializeRecipesWithIngredients(
         IEnumerable<RecipeListModel> recipes,
         IngredientList ingredientList = IngredientList.All
     )
@@ -134,7 +145,7 @@ internal static class Serializer
         return tb.Build();
     }
 
-    internal static string SerializeIngredients(IEnumerable<IngredientListModel> ingredients)
+    public string SerializeIngredients(IEnumerable<IngredientListModel> ingredients)
     {
         ingredients = ingredients.ToList();
 
@@ -172,7 +183,7 @@ internal static class Serializer
         return tb.Build();
     }
 
-    internal static string SerializeIngredientsWithAdded(IEnumerable<IngredientListModel> inventory)
+    public string SerializeIngredientsWithAdded(IEnumerable<IngredientListModel> inventory)
     {
         inventory = inventory.ToList();
 
