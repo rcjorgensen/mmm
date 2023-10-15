@@ -376,6 +376,82 @@
         "Rice vinegar",
         "Sesame oil"
       ]
+    },
+    {
+      "name": "Creamy Dreamy Butter Chicken",
+      "details": "p. 83",
+      "ingredients": [
+        "Chicken",
+        "Garlic",
+        "Greek yogurt",
+        "Garam masala",
+        "Smoked paprika",
+        "Garlic powder",
+        "Ginger",
+        "Salt",
+        "Olive oil",
+        "Butter",
+        "Onion",
+        "Canned tomato",
+        "Cream",
+        "Cilantro"
+      ]
+    },
+    {
+      "name": "Leftover Chicken Salad",
+      "details": "p. 86",
+      "ingredients": [
+        "Chicken",
+        "Scallion",
+        "Capers",
+        "Garlic",
+        "Dried cranberry",
+        "Parsley",
+        "Greek yogurt",
+        "Mayonnaise",
+        "Dijon mustard",
+        "Olive oil",
+        "Salt",
+        "Black pepper",
+        "Burger bun",
+        "Lettuce",
+        "Tomato"
+      ]
+    },
+    {
+      "name": "Spicy Cherry Tomato Pasta",
+      "details": "p. 89",
+      "ingredients": [
+        "Salt",
+        "Pasta",
+        "Olive oil",
+        "Onion",
+        "Garlic",
+        "Red chile",
+        "Cherry tomato",
+        "Basil",
+        "Parmesan"
+      ]
+    },
+    {
+      "name": "My Creamy Veggie-Packed Soup",
+      "details": "p. 90",
+      "ingredients": [
+        "Butter",
+        "Onion",
+        "Garlic",
+        "Carrot",
+        "Parsnip",
+        "Potato",
+        "Celery",
+        "Salt",
+        "Black pepper",
+        "Veggie stock",
+        "Frozen pea",
+        "Cream",
+        "Parsley",
+        "Bread"
+      ]
     }
   ]
 }

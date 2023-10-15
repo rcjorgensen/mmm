@@ -6,7 +6,7 @@
 
 ## Ubuntu
 
-### Install requirements
+### Requirements
 
 #### .NET
 
@@ -20,7 +20,7 @@ sudo apt-get install dotnet-sdk-7.0
 sudo apt-get install sqlite3
 ```
 
-### Install recipizer globally
+### Installing
 
 ```sh
 sh ./install.sh
@@ -253,7 +253,7 @@ recipizer recipes --list --with-ingredients --by-fewest-missing --take 2 --markd
 - [ ] List ingredients with recipes where they are used and order by most used
 - [x] Serialize to markdown
 - [ ] Output a report in markdown
-- [x] Add global installation script
+- [x] Add installation script
 - [ ] Add e2e testing
 - [ ] Publish pre-built binary
 - [x] Improve serializer multiline support for tables
