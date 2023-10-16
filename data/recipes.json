@@ -452,6 +452,42 @@
         "Parsley",
         "Bread"
       ]
+    },
+    {
+      "name": "Healthier \"Fried\" Chicken Wings",
+      "details": "p. 92",
+      "ingredients": [
+        "Chicken wing",
+        "Flour",
+        "Cornstarch",
+        "Baking powder",
+        "Salt",
+        "Ground white pepper",
+        "Smoked paprika",
+        "Dried thyme",
+        "Garlic powder",
+        "Onion powder",
+        "Ground ginger",
+        "Ground mustard",
+        "Cayenne pepper"
+      ]
+    },
+    {
+      "name": "Easy Chicken Congee",
+      "details": "p. 95",
+      "ingredients": [
+        "Chicken",
+        "Cornstarch",
+        "Soy sauce",
+        "Sesame oil",
+        "Garlic",
+        "Chicken bouillon",
+        "Rice",
+        "Ginger",
+        "Scallion",
+        "Salt",
+        "Cilantro"
+      ]
     }
   ]
 }
