@@ -14,7 +14,7 @@ mkdir temp
 cp src/Recipizer.Cli/bin/Release/net7.0/ubuntu.22.04-x64/publish/* temp
 
 # rename binary
-mv temp/Recipizer.Cli recipizer
+mv temp/Recipizer.Cli temp/recipizer
 
 # copy configuration and data files
 cp data/recipes.json temp
