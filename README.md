@@ -245,6 +245,53 @@ recipizer recipes --list --with-ingredients --by-fewest-missing --take 2 --markd
 |   3 | Healthy(ish) Banana Pancakes    | p. 36   | <table><tr><th align="right">Id</th><th align="left">Name</th><th align="left">Added</th></tr><tr><td align="right">23</td><td align="left">Milk</td><td align="left"></td></tr><tr><td align="right">24</td><td align="left">Vanilla extract</td><td align="left"></td></tr><tr><td align="right">11</td><td align="left">Salt</td><td align="left">2023-10-08</td></tr><tr><td align="right">12</td><td align="left">Egg</td><td align="left">2023-10-08</td></tr><tr><td align="right">13</td><td align="left">Banana</td><td align="left">2023-10-08</td></tr><tr><td align="right">16</td><td align="left">Greek yogurt</td><td align="left">2023-10-08</td></tr><tr><td align="right">19</td><td align="left">Ground cinnamon</td><td align="left">2023-10-08</td></tr><tr><td align="right">20</td><td align="left">Baking powder</td><td align="left">2023-10-08</td></tr><tr><td align="right">25</td><td align="left">Flour</td><td align="left">2023-10-08</td></tr><tr><td align="right">26</td><td align="left">Dark brown sugar</td><td align="left">2023-10-08</td></tr><tr><td align="right">27</td><td align="left">Butter</td><td align="left">2023-10-08</td></tr></table>                                                                                                     |
 |   2 | Peanut Butter Banana Baked Oats | p. 35   | <table><tr><th align="right">Id</th><th align="left">Name</th><th align="left">Added</th></tr><tr><td align="right">21</td><td align="left">Walnut</td><td align="left"></td></tr><tr><td align="right">22</td><td align="left">Dried cranberry</td><td align="left"></td></tr><tr><td align="right">11</td><td align="left">Salt</td><td align="left">2023-10-08</td></tr><tr><td align="right">12</td><td align="left">Egg</td><td align="left">2023-10-08</td></tr><tr><td align="right">13</td><td align="left">Banana</td><td align="left">2023-10-08</td></tr><tr><td align="right">14</td><td align="left">Plant-based milk</td><td align="left">2023-10-08</td></tr><tr><td align="right">15</td><td align="left">Peanut butter</td><td align="left">2023-10-08</td></tr><tr><td align="right">16</td><td align="left">Greek yogurt</td><td align="left">2023-10-08</td></tr><tr><td align="right">17</td><td align="left">Honey</td><td align="left">2023-10-08</td></tr><tr><td align="right">18</td><td align="left">Oat</td><td align="left">2023-10-08</td></tr><tr><td align="right">19</td><td align="left">Ground cinnamon</td><td align="left">2023-10-08</td></tr><tr><td align="right">20</td><td align="left">Baking powder</td><td align="left">2023-10-08</td></tr></table> |
 
+# Autocompletions for zsh - WIP
+
+Create a file `_recipizer` somewhere on the `$fpath` and paste the following
+
+```zsh
+#compdef _recipizer recipizer
+
+function _recipizer {
+  local line
+
+  _arguments -C \
+    "--help[Show help information]" \
+    "1: :(recipes ingredients)" \
+    "*::arg:->args"
+  
+  case $line[1] in 
+    recipes)
+      _recipizer_recipes
+    ;;
+    ingredients)
+      _recipizer_ingredients
+    ;;
+  esac
+}
+
+function _recipizer_recipes {
+  _arguments \
+    "--help[Show help information]" \
+    "--list[List recipes]"
+}
+
+function _recipizer_ingredients {
+  _arguments \
+    "--help[Show help information]" \
+    "-l[List all ingredients]" \
+    "--list[List all ingredients]" \
+    "--missing[List missing ingredients]" \
+    "--inventory[List inventory ingredients]" \
+    "-m[Filter by <match>]" \
+    "--match[Filter by <match>]" \
+    "-a[Add ingredient]" \
+    "--add[Add ingredient]" \
+    "-i[Specify that -a and --add should add the ingredient to the inventory]" \
+    "--to-inventory[Specify that -a and --add should add the ingredient to the inventory]"
+}
+```
+
 # Roadmap
 
 - [ ] Add more recipes
