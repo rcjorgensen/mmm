@@ -3,7 +3,14 @@ using Recipizer.Cli.Options;
 
 namespace Recipizer.Cli;
 
-internal sealed class Application
+internal interface IApplication
+{
+    Task<string> Init(InitOptions options);
+    Task<string> Recipes(RecipesOptions options);
+    Task<string> Ingredients(IngredientsOptions options);
+}
+
+internal sealed class Application : IApplication
 {
     private readonly Configuration _configuration;
     private readonly IRepository _repository;
@@ -99,7 +106,7 @@ internal sealed class Application
         return "SUCCESS: Database initialized";
     }
 
-    internal async Task<string> Recipes(RecipesOptions options)
+    public async Task<string> Recipes(RecipesOptions options)
     {
         var databaseFilePath = _configuration.DatabaseFilePath;
         if (databaseFilePath == null)
@@ -263,7 +270,7 @@ internal sealed class Application
         return _serializer.SerializeRecipes(await _repository.GetRecipes(options.Match));
     }
 
-    internal async Task<string> Ingredients(IngredientsOptions options)
+    public async Task<string> Ingredients(IngredientsOptions options)
     {
         var databaseFilePath = _configuration.DatabaseFilePath;
         if (databaseFilePath == null)
