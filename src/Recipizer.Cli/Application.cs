@@ -55,9 +55,6 @@ internal sealed class Application : IApplication
 
         await _repository.InitializeSchema();
 
-        Console.WriteLine($"Data file path: {Path.GetFullPath(dataFilePath)}");
-        Console.WriteLine($"Current directory: {Directory.GetCurrentDirectory()}");
-
         var data = await _fileSystem.ReadAllText(dataFilePath);
 
         var labels = _deserializer.DeserializeLabels(data);
