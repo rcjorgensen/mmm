@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{242D90CE-8EBB-4DDD-9887-7C0BFB2BB0B2}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{19C452A3-8273-4E9E-A050-35D1B688D12E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Recipizer.Cli", "src\Recipizer.Cli\Recipizer.Cli.csproj", "{63DB89B0-71BC-407F-8930-78D69B2CBC0B}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rcp", "src\rcp\rcp.csproj", "{B7DAC963-6B18-4C06-92F1-4508623BE066}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,12 +16,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{63DB89B0-71BC-407F-8930-78D69B2CBC0B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{63DB89B0-71BC-407F-8930-78D69B2CBC0B}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{63DB89B0-71BC-407F-8930-78D69B2CBC0B}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{63DB89B0-71BC-407F-8930-78D69B2CBC0B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B7DAC963-6B18-4C06-92F1-4508623BE066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B7DAC963-6B18-4C06-92F1-4508623BE066}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B7DAC963-6B18-4C06-92F1-4508623BE066}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B7DAC963-6B18-4C06-92F1-4508623BE066}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{63DB89B0-71BC-407F-8930-78D69B2CBC0B} = {242D90CE-8EBB-4DDD-9887-7C0BFB2BB0B2}
+		{B7DAC963-6B18-4C06-92F1-4508623BE066} = {19C452A3-8273-4E9E-A050-35D1B688D12E}
 	EndGlobalSection
 EndGlobal

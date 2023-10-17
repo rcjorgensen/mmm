@@ -3,28 +3,20 @@
 # publish
 dotnet publish -c release -r ubuntu.22.04-x64 --self-contained
 
+install_dir=$HOME/.local/bin/recipizer
+
 # create installation dir
-mkdir -p $HOME/.local/bin/recipizer
+mkdir -p $install_dir
 
 # create temp dir
 rm -rf temp
 mkdir temp
 
-# copy everything to temp dir
-cp src/Recipizer.Cli/bin/Release/net7.0/ubuntu.22.04-x64/publish/* temp
-
-# rename binary
-mv temp/Recipizer.Cli temp/recipizer
-
-# copy configuration and data files
-cp data/recipes.json temp
-cp src/Recipizer.Cli/appsettings.json temp
-
 # copy everything to install dir
-cp temp/* $HOME/.local/bin/recipizer
+cp src/rcp/bin/Release/net7.0/ubuntu.22.04-x64/publish/* $install_dir
 
-# clean up temp dir
-rm -r temp
+# copy configuration to install dir
+cp src/rcp/appsettings.json $install_dir
 
 # inform about env variable
-echo 'make sure the following environment variable is set: export RECIPIZER_INSTALL_DIR="$HOME/.local/bin/recipizer"'
+echo 'INFO: Put the following in your .zshrc or similar: export RECIPIZER_INSTALL_DIR="'$install_dir'"'
