@@ -3,9 +3,9 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.0.31903.59
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{19C452A3-8273-4E9E-A050-35D1B688D12E}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "src", "src", "{7B6AA78D-6CE3-4F2B-9FBC-EB0CC370350E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rcp", "src\rcp\rcp.csproj", "{B7DAC963-6B18-4C06-92F1-4508623BE066}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "rpr", "src\rpr\rpr.csproj", "{47C05BB5-1628-452F-860F-EC73CCAD8B33}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -16,12 +16,12 @@ Global
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{B7DAC963-6B18-4C06-92F1-4508623BE066}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{B7DAC963-6B18-4C06-92F1-4508623BE066}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{B7DAC963-6B18-4C06-92F1-4508623BE066}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{B7DAC963-6B18-4C06-92F1-4508623BE066}.Release|Any CPU.Build.0 = Release|Any CPU
+		{47C05BB5-1628-452F-860F-EC73CCAD8B33}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{47C05BB5-1628-452F-860F-EC73CCAD8B33}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{47C05BB5-1628-452F-860F-EC73CCAD8B33}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{47C05BB5-1628-452F-860F-EC73CCAD8B33}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{B7DAC963-6B18-4C06-92F1-4508623BE066} = {19C452A3-8273-4E9E-A050-35D1B688D12E}
+		{47C05BB5-1628-452F-860F-EC73CCAD8B33} = {7B6AA78D-6CE3-4F2B-9FBC-EB0CC370350E}
 	EndGlobalSection
 EndGlobal

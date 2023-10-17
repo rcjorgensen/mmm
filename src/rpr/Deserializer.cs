@@ -1,15 +1,9 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
+
 using Recipizer.Cli.Models;
 
 namespace Recipizer.Cli;
-
-internal interface IDeserializer
-{
-    List<RecipeInitModel>? DeserializeRecipes(string data);
-    string? DeserializeRecipeSource(string data);
-    string[]? DeserializeLabels(string data);
-}
 
 internal sealed class Deserializer : IDeserializer
 {
@@ -36,6 +30,15 @@ internal sealed class Deserializer : IDeserializer
         return JsonNode
             .Parse(data)
             ?["labels"].Deserialize<string[]>(
+                new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+            );
+    }
+
+    public string[]? DeserializeInventory(string data)
+    {
+        return JsonNode
+            .Parse(data)
+            ?["inventory"].Deserialize<string[]>(
                 new JsonSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
             );
     }

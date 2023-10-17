@@ -45,10 +45,7 @@ internal static class MarkdownSerializer
         return tb.Build();
     }
 
-    internal static string SerializeRecipesWithIngredients(
-        IEnumerable<RecipeListModel> recipes,
-        IngredientList ingredientList = IngredientList.All
-    )
+    internal static string SerializeRecipesWithIngredients(IEnumerable<RecipeListModel> recipes)
     {
         recipes = recipes.ToList();
 
@@ -57,31 +54,14 @@ internal static class MarkdownSerializer
         {
             ingredientSubTables.Add(
                 recipe,
-                ingredientList switch
-                {
-                    IngredientList.All
-                        => HtmlSerializer.SerializeIngredientsWithAdded(recipe.AllIngredients),
-                    IngredientList.Missing
-                        => HtmlSerializer.SerializeIngredients(recipe.MissingIngredients),
-                    IngredientList.Inventory
-                        => HtmlSerializer.SerializeIngredientsWithAdded(
-                            recipe.InventoryIngredients
-                        ),
-                    _ => throw new NotImplementedException()
-                }
+                HtmlSerializer.SerializeIngredients(recipe.AllIngredients)
             );
         }
 
         var idHeader = "Id";
         var nameHeader = "Name";
         var detailsHeader = "Details";
-        var ingredientsHeader = ingredientList switch
-        {
-            IngredientList.All => "Ingredients",
-            IngredientList.Missing => "Ingredients missing",
-            IngredientList.Inventory => "Ingredients in inventory",
-            _ => throw new NotImplementedException()
-        };
+        var ingredientsHeader = "Ingredients";
 
         var columnInnerWidths = new int[4];
 

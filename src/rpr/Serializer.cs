@@ -2,17 +2,6 @@ using Recipizer.Cli.Models;
 
 namespace Recipizer.Cli;
 
-internal interface ISerializer
-{
-    string SerializeRecipes(IEnumerable<RecipeListModel> recipes);
-    string SerializeRecipesWithIngredients(
-        IEnumerable<RecipeListModel> recipes,
-        IngredientList ingredientList = IngredientList.All
-    );
-    string SerializeIngredients(IEnumerable<IngredientListModel> ingredients);
-    string SerializeIngredientsWithAdded(IEnumerable<IngredientListModel> inventory);
-}
-
 internal sealed class Serializer : ISerializer
 {
     public string SerializeRecipes(IEnumerable<RecipeListModel> recipes)
@@ -59,10 +48,7 @@ internal sealed class Serializer : ISerializer
         return tb.Build();
     }
 
-    public string SerializeRecipesWithIngredients(
-        IEnumerable<RecipeListModel> recipes,
-        IngredientList ingredientList = IngredientList.All
-    )
+    public string SerializeRecipesWithIngredients(IEnumerable<RecipeListModel> recipes)
     {
         recipes = recipes.ToList();
 
@@ -71,32 +57,15 @@ internal sealed class Serializer : ISerializer
         {
             ingredientSubTables.Add(
                 recipe,
-                ingredientList switch
-                {
-                    IngredientList.All
-                        => SerializeIngredientsWithAdded(recipe.AllIngredients)
-                            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
-                    IngredientList.Missing
-                        => SerializeIngredients(recipe.MissingIngredients)
-                            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
-                    IngredientList.Inventory
-                        => SerializeIngredientsWithAdded(recipe.InventoryIngredients)
-                            .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries),
-                    _ => throw new NotImplementedException()
-                }
+                SerializeIngredients(recipe.AllIngredients)
+                    .Split(Environment.NewLine, StringSplitOptions.RemoveEmptyEntries)
             );
         }
 
         var idHeader = "Id";
         var nameHeader = "Name";
         var detailsHeader = "Details";
-        var ingredientsHeader = ingredientList switch
-        {
-            IngredientList.All => "Ingredients",
-            IngredientList.Missing => "Ingredients missing",
-            IngredientList.Inventory => "Ingredients in inventory",
-            _ => throw new NotImplementedException()
-        };
+        var ingredientsHeader = "Ingredients";
 
         var columnInnerWidths = new int[4];
 
@@ -151,8 +120,10 @@ internal sealed class Serializer : ISerializer
 
         var idHeader = "Id";
         var nameHeader = "Name";
+        var addedHeader = "Added";
+        var labelsHeader = "Labels";
 
-        var columnInnerWidths = new int[2];
+        var columnInnerWidths = new int[4];
 
         // MaxBy should never return null here
         columnInnerWidths[0] = Math.Max(
@@ -165,62 +136,28 @@ internal sealed class Serializer : ISerializer
             ingredients.Select(x => x.Name.ToString()).MaxBy(i => i.Length)?.Length ?? 0
         );
 
-        var tb = new TableBuilder(columnInnerWidths);
+        columnInnerWidths[2] = Math.Max(
+            addedHeader.Length,
+            ingredients.Select(x => x.Added.ToString()).MaxBy(i => i.Length)?.Length ?? 0
+        );
 
+        columnInnerWidths[3] = Math.Max(
+            labelsHeader.Length,
+            ingredients.Select(x => x.JoinedLabels).MaxBy(i => i.Length)?.Length ?? 0
+        );
+
+        var tb = new TableBuilder(columnInnerWidths);
         tb.AppendTop();
-        tb.AppendRow(idHeader, nameHeader);
+
+        tb.AppendRow(idHeader, nameHeader, addedHeader, labelsHeader);
+
         tb.AppendSeparator();
 
         foreach (var ingredient in ingredients)
         {
             var ingredientId = ingredient.IngredientId.ToString();
 
-            tb.AppendRow(ingredientId, ingredient.Name);
-        }
-
-        tb.AppendBottom();
-
-        return tb.Build();
-    }
-
-    public string SerializeIngredientsWithAdded(IEnumerable<IngredientListModel> inventory)
-    {
-        inventory = inventory.ToList();
-
-        var idHeader = "Id";
-        var nameHeader = "Name";
-        var addedHeader = "Added";
-
-        var columnInnerWidths = new int[3];
-
-        // MaxBy should never return null here
-        columnInnerWidths[0] = Math.Max(
-            idHeader.Length,
-            inventory.Select(x => x.IngredientId.ToString()).MaxBy(i => i.Length)?.Length ?? 0
-        );
-
-        columnInnerWidths[1] = Math.Max(
-            nameHeader.Length,
-            inventory.Select(x => x.Name.ToString()).MaxBy(i => i.Length)?.Length ?? 0
-        );
-
-        columnInnerWidths[2] = Math.Max(
-            addedHeader.Length,
-            inventory.Select(x => x.Added.ToString()).MaxBy(i => i.Length)?.Length ?? 0
-        );
-
-        var tb = new TableBuilder(columnInnerWidths);
-        tb.AppendTop();
-
-        tb.AppendRow(idHeader, nameHeader, addedHeader);
-
-        tb.AppendSeparator();
-
-        foreach (var ingredient in inventory)
-        {
-            var ingredientId = ingredient.IngredientId.ToString();
-
-            tb.AppendRow(ingredientId, ingredient.Name, ingredient.Added);
+            tb.AppendRow(ingredientId, ingredient.Name, ingredient.Added, ingredient.JoinedLabels);
         }
 
         tb.AppendBottom();

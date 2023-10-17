@@ -67,7 +67,7 @@ if (dataFilePath != null)
 
 using var sqlConnection = new SQLiteConnection($"Data Source={configuration.DatabaseFilePath}");
 
-var app = new Application(
+IApplication app = new Application(
     configuration,
     new Repository(sqlConnection),
     new FileSystem(),
@@ -79,11 +79,35 @@ var app = new Application(
 
 
 var result = await Parser.Default
-    .ParseArguments<InitOptions, RecipesOptions, IngredientsOptions>(args)
+    .ParseArguments<
+        AddIngredientOptions,
+        AddLabelOptions,
+        RemoveLabelOptions,
+        AddRecipeOptions,
+        AddToInventoryOptions,
+        ImportOptions,
+        InitializeOptions,
+        ShowIngredientsOptions,
+        ShowInventoryOptions,
+        ShowMissingIngredientsOptions,
+        ShowRecipesOptions,
+        RemoveFromInventoryOptions,
+        RemoveRecipeOptions
+    >(args)
     .MapResult(
-        (InitOptions opts) => app.Init(opts),
-        (RecipesOptions opts) => app.Recipes(opts),
-        (IngredientsOptions opts) => app.Ingredients(opts),
+        (AddIngredientOptions opts) => app.AddIngredient(opts),
+        (AddLabelOptions opts) => app.AddLabel(opts),
+        (RemoveLabelOptions opts) => app.RemoveLabel(opts),
+        (AddRecipeOptions opts) => app.AddRecipe(opts),
+        (AddToInventoryOptions opts) => app.AddToInventory(opts),
+        (ImportOptions opts) => app.Import(opts),
+        (InitializeOptions opts) => app.Initialize(opts),
+        (RemoveFromInventoryOptions opts) => app.RemoveFromInventory(opts),
+        (RemoveRecipeOptions opts) => app.RemoveRecipe(opts),
+        (ShowIngredientsOptions opts) => app.ShowIngredients(opts),
+        (ShowInventoryOptions opts) => app.ShowInventory(opts),
+        (ShowMissingIngredientsOptions opts) => app.ShowMissingIngredients(opts),
+        (ShowRecipesOptions opts) => app.ShowRecipes(opts),
         errs => Task.FromResult(string.Empty)
     );
 
