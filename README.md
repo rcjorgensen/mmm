@@ -109,14 +109,6 @@ rpr show-recipes --order-by-missing-ingredients --take 2
 └────┴───────────────────────────┴─────────┴───────────────────────────────────────────────┘
 ```
 
-### Add labels to ingredients
-
-```sh
-rpr add-label perishable 58
-
-
-```
-
 ### Show ingredients
 
 ```sh
