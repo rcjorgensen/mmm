@@ -1,4 +1,4 @@
-# :hamburger: :poultry_leg: :spaghetti: :curry: :ramen: :sushi:
+# mmm :hamburger: :poultry_leg: :spaghetti: :curry: :ramen: :sushi:
 
 CLI for organizing recipes, ingredients and more
 
@@ -8,17 +8,7 @@ CLI for organizing recipes, ingredients and more
 
 ### Requirements
 
-#### .NET
-
-```sh
-sudo apt-get install dotnet-sdk-7.0
-```
-
-#### SQLite
-
-```sh
-sudo apt-get install sqlite3
-```
+* .NET 7 or above
 
 ### Installing
 
@@ -26,17 +16,17 @@ sudo apt-get install sqlite3
 sh ./install.sh
 ```
 
-After installation set the path to the install dir as an environment variable e.g. in your .zshrc or similar and add it to the PATH to be able to execute it from anywhere.
+After installation set the path to the install dir as an environment variable and add it to the PATH to be able to execute it from anywhere. This can be added to your `.bashrc`, `.zshrc` or similar.
 
 ```sh
-export RECIPIZER_INSTALL_DIR="$HOME/.local/bin/recipizer"
-export PATH="$RECIPIZER_INSTALL_DIR:$PATH"
+export MMM_INSTALL_DIR="$HOME/.local/bin/mmm"
+export PATH="$MMM_INSTALL_DIR:$PATH"
 ```
 
 ### Intialize database
 
 ```sh
-rpr initialize [-f|--force]
+mmm init [-f|--force]
 ```
 
 ### Import recipes, ingredients etc.
@@ -44,13 +34,13 @@ rpr initialize [-f|--force]
 The schema of the JSON file is currently undocumented, but should be pretty easy to reverse engineer
 
 ```sh
-rpr import ./data.json
+mmm import ./data.json
 ```
 
 ### Show recipes
 
 ```sh
-rpr show-recipes --name %Banana% --take 1
+mmm show-recipes --name %Banana% --take 1
 
 ┌────┬─────────────────────────────────┬─────────┬─────────────────────────────────────────────────┐
 │ Id │ Name                            │ Details │ Ingredients                                     │
@@ -77,7 +67,7 @@ rpr show-recipes --name %Banana% --take 1
 ### Order by missing ingredients
 
 ```sh
-rpr show-recipes --order-by-missing-ingredients --take 2
+mmm show-recipes --order-by-missing-ingredients --take 2
 
 ┌────┬───────────────────────────┬─────────┬───────────────────────────────────────────────┐
 │ Id │ Name                      │ Details │ Ingredients                                   │
@@ -112,7 +102,7 @@ rpr show-recipes --order-by-missing-ingredients --take 2
 ### Show ingredients
 
 ```sh
-rpr show-ingredients --name Egg%
+mmm show-ingredients --name Egg%
 
 ┌────┬──────────┬────────────┬────────┐
 │ Id │ Name     │ Added      │ Labels │
@@ -125,13 +115,13 @@ rpr show-ingredients --name Egg%
 ### Add labels to ingredients
 
 ```sh
-rpr add-label perishable 58 12
+mmm add-label perishable 58 12
 ```
 
 ### Filter by label
 
 ```sh
-rpr show-ingredients --label perishable
+mmm show-ingredients --label perishable
 
 ┌────┬──────────┬────────────┬────────────┐
 │ Id │ Name     │ Added      │ Labels     │
@@ -144,13 +134,13 @@ rpr show-ingredients --label perishable
 ### Remove label
 
 ```sh
-rpr remove-label perishable 58 12
+mmm remove-label perishable 58 12
 ```
 
 ### Show missing ingredients
 
 ```sh
-rpr show-missing-ingredients --take 2
+mmm show-missing-ingredients --take 2
 
 ┌────┬─────────┬───────┬────────┐
 │ Id │ Name    │ Added │ Labels │
@@ -163,7 +153,7 @@ rpr show-missing-ingredients --take 2
 ### Add ingredients to inventory
 
 ```sh
-rpr add-to-inventory 3 4
+mmm add-to-inventory 3 4
 
 ┌────┬──────────────────┬────────────┬────────┐
 │ Id │ Name             │ Added      │ Labels │
@@ -184,7 +174,7 @@ rpr add-to-inventory 3 4
 ### Remove ingredients from inventory
 
 ```sh
-rpr remove-from-inventory 3 4
+mmm remove-from-inventory 3 4
 
 ┌────┬──────────────────┬────────────┬────────┐
 │ Id │ Name             │ Added      │ Labels │
@@ -203,7 +193,7 @@ rpr remove-from-inventory 3 4
 #### List ingredients in inventory
 
 ```sh
-rpr show-inventory
+mmm show-inventory
 
 ┌────┬──────────────────┬────────────┬────────┐
 │ Id │ Name             │ Added      │ Labels │
@@ -226,7 +216,7 @@ This is an experimental feature that will only work in some cases.
 It might be helpful later on for creating reports with multiple tables.
 
 ```sh
-rpr show-recipes --take 2 --markdown > OUTPUT.md
+mmm show-recipes --take 2 --markdown > OUTPUT.md
 ```
 
 |  Id | Name                   | Details | Ingredients                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -236,12 +226,12 @@ rpr show-recipes --take 2 --markdown > OUTPUT.md
 
 # Autocompletions for zsh - WIP
 
-Create a file `_rpr` somewhere on the `$fpath` and paste the following
+Create a file `_mmm` somewhere on the `$fpath` and paste the following
 
 ```zsh
-#compdef _rpr rpr
+#compdef _mmm mmm
 
-function _rpr {
+function _mmm {
   local line
 
   _arguments -C \
