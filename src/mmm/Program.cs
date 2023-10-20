@@ -23,11 +23,11 @@ DefaultTypeMap.MatchNamesWithUnderscores = true;
 // Environment variables
 
 
-var installDir = Environment.GetEnvironmentVariable("RECIPIZER_INSTALL_DIR");
+var installDir = Environment.GetEnvironmentVariable("MMM_INSTALL_DIR");
 
 if (installDir == null)
 {
-    Console.WriteLine("ERROR: Could not read environment variable `RECIPIZER_INSTALL_DIR`");
+    Console.WriteLine("ERROR: Could not read environment variable `MMM_INSTALL_DIR`");
     return;
 }
 

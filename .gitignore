@@ -477,4 +477,4 @@ $RECYCLE.BIN/
 *.lnk
 
 # Custom
-recipizer.db
+*.db
