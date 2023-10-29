@@ -10,9 +10,9 @@
       "request": "launch",
       "preLaunchTask": "build",
       // If you have changed target frameworks, make sure to update the program path.
-      "program": "${workspaceFolder}/src/rpr/bin/Debug/net7.0/rpr.dll",
+      "program": "${workspaceFolder}/src/r7r/bin/Debug/net7.0/r7r.dll",
       "args": ["sr", "-l", "fruit"],
-      "cwd": "${workspaceFolder}/src/rpr",
+      "cwd": "${workspaceFolder}/src/r7r",
       // For more information about the 'console' field, see https://aka.ms/VSCode-CS-LaunchJson-Console
       "console": "internalConsole",
       "stopAtEntry": false
