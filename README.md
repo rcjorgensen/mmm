@@ -1,4 +1,4 @@
-# mmm :hamburger: :poultry_leg: :spaghetti: :curry: :ramen: :sushi:
+# r7r :hamburger: :poultry_leg: :spaghetti: :curry: :ramen: :sushi:
 
 CLI for organizing recipes, ingredients and more
 
@@ -8,25 +8,26 @@ CLI for organizing recipes, ingredients and more
 
 ### Requirements
 
-* .NET 7 or above
+- .NET 7 or above
 
 ### Installing
 
 ```sh
-sh ./install.sh
+sh ./publish.sh
 ```
 
 After installation set the path to the install dir as an environment variable and add it to the PATH to be able to execute it from anywhere. This can be added to your `.bashrc`, `.zshrc` or similar.
 
 ```sh
-export MMM_INSTALL_DIR="$HOME/.local/bin/mmm"
-export PATH="$MMM_INSTALL_DIR:$PATH"
+export R7R_DB_PATH="$HOME/.repizer-database.db"
 ```
+
+Optionally put the publish directory on your path.
 
 ### Intialize database
 
 ```sh
-mmm init [-f|--force]
+r7r init [-f|--force]
 ```
 
 ### Import recipes, ingredients etc.
@@ -34,13 +35,13 @@ mmm init [-f|--force]
 The schema of the JSON file is currently undocumented, but should be pretty easy to reverse engineer
 
 ```sh
-mmm import ./data.json
+r7r import ./data.json
 ```
 
 ### Show recipes
 
 ```sh
-mmm show-recipes --name %Banana% --take 1
+r7r show-recipes --name %Banana% --take 1
 
 ┌────┬─────────────────────────────────┬─────────┬─────────────────────────────────────────────────┐
 │ Id │ Name                            │ Details │ Ingredients                                     │
@@ -67,7 +68,7 @@ mmm show-recipes --name %Banana% --take 1
 ### Order by missing ingredients
 
 ```sh
-mmm show-recipes --order-by-missing-ingredients --take 2
+r7r show-recipes --order-by-missing-ingredients --take 2
 
 ┌────┬───────────────────────────┬─────────┬───────────────────────────────────────────────┐
 │ Id │ Name                      │ Details │ Ingredients                                   │
@@ -102,7 +103,7 @@ mmm show-recipes --order-by-missing-ingredients --take 2
 ### Show ingredients
 
 ```sh
-mmm show-ingredients --name Egg%
+r7r show-ingredients --name Egg%
 
 ┌────┬──────────┬────────────┬────────┐
 │ Id │ Name     │ Added      │ Labels │
@@ -115,13 +116,13 @@ mmm show-ingredients --name Egg%
 ### Add labels to ingredients
 
 ```sh
-mmm add-label perishable 58 12
+r7r add-label perishable 58 12
 ```
 
 ### Filter by label
 
 ```sh
-mmm show-ingredients --label perishable
+r7r show-ingredients --label perishable
 
 ┌────┬──────────┬────────────┬────────────┐
 │ Id │ Name     │ Added      │ Labels     │
@@ -134,13 +135,13 @@ mmm show-ingredients --label perishable
 ### Remove label
 
 ```sh
-mmm remove-label perishable 58 12
+r7r remove-label perishable 58 12
 ```
 
 ### Show missing ingredients
 
 ```sh
-mmm show-missing-ingredients --take 2
+r7r show-missing-ingredients --take 2
 
 ┌────┬─────────┬───────┬────────┐
 │ Id │ Name    │ Added │ Labels │
@@ -153,7 +154,7 @@ mmm show-missing-ingredients --take 2
 ### Add ingredients to inventory
 
 ```sh
-mmm add-to-inventory 3 4
+r7r add-to-inventory 3 4
 
 ┌────┬──────────────────┬────────────┬────────┐
 │ Id │ Name             │ Added      │ Labels │
@@ -174,7 +175,7 @@ mmm add-to-inventory 3 4
 ### Remove ingredients from inventory
 
 ```sh
-mmm remove-from-inventory 3 4
+r7r remove-from-inventory 3 4
 
 ┌────┬──────────────────┬────────────┬────────┐
 │ Id │ Name             │ Added      │ Labels │
@@ -193,7 +194,7 @@ mmm remove-from-inventory 3 4
 #### List ingredients in inventory
 
 ```sh
-mmm show-inventory
+r7r show-inventory
 
 ┌────┬──────────────────┬────────────┬────────┐
 │ Id │ Name             │ Added      │ Labels │
@@ -216,7 +217,7 @@ This is an experimental feature that will only work in some cases.
 It might be helpful later on for creating reports with multiple tables.
 
 ```sh
-mmm show-recipes --take 2 --markdown > OUTPUT.md
+r7r show-recipes --take 2 --markdown > OUTPUT.md
 ```
 
 |  Id | Name                   | Details | Ingredients                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                    |
@@ -226,12 +227,12 @@ mmm show-recipes --take 2 --markdown > OUTPUT.md
 
 # Autocompletions for zsh - WIP
 
-Create a file `_mmm` somewhere on the `$fpath` and paste the following
+Create a file `_r7r` somewhere on the `$fpath` and paste the following
 
 ```zsh
-#compdef _mmm mmm
+#compdef _r7r r7r
 
-function _mmm {
+function _r7r {
   local line
 
   _arguments -C \
