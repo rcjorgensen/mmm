@@ -1,0 +1,50 @@
+@page
+@model IngredientsModel
+@{
+    ViewData["Title"] = "Ingredients";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Ingredients</h1>
+</div>
+<form method="post">
+    <table class="table">
+        <table class="table">
+            <thead>
+                <tr>
+                    <th>Id</th>
+                    <th>Name</th>
+                    <th>Added</th>
+                    <th>Labels</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                @if (Model.Ingredients != null)
+                {
+                    @foreach (var ingredient in Model.Ingredients)
+                    {
+                        <tr>
+                            <td>@ingredient.IngredientId</td>
+                            <td>@ingredient.Name</td>
+                            <td>@ingredient.Added</td>
+                            <td>@ingredient.JoinedLabels</td>
+                            <td>
+                                @if (string.IsNullOrWhiteSpace(ingredient.Added))
+                                {
+                                    <button class="btn" type="submit" asp-page-handler="add"
+                                        asp-route-id="@ingredient.IngredientId">Add</button>
+                                }
+                                else
+                                {
+                                    <button class="btn" type="submit" asp-page-handler="remove"
+                                        asp-route-id="@ingredient.IngredientId">Remove</button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                }
+            </tbody>
+        </table>
+    </table>
+</form>

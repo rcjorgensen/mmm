@@ -1,6 +1,6 @@
-namespace r7r.Models;
+namespace Recipizer.Core.Models;
 
-internal sealed class RecipeInitModel
+public sealed class RecipeInitModel
 {
     public required string Name { get; set; }
     public required string Details { get; set; }

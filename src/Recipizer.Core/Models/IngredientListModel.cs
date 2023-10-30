@@ -1,6 +1,6 @@
-namespace r7r.Models;
+namespace Recipizer.Core.Models;
 
-internal sealed class IngredientListModel
+public sealed class IngredientListModel
 {
     public required long IngredientId { get; set; }
     public required string Name { get; set; }

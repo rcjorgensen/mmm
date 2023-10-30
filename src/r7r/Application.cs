@@ -1,5 +1,7 @@
-using r7r.Models;
 using r7r.Options;
+
+using Recipizer.Core;
+using Recipizer.Core.Models;
 
 namespace r7r;
 

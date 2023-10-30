@@ -7,6 +7,8 @@ using Dapper;
 using r7r;
 using r7r.Options;
 
+using Recipizer.Core;
+
 // Here we should handle:
 // * Setting global state e.g. configuring Dapper
 // * Reading environment variables

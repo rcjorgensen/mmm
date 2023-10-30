@@ -1,7 +1,7 @@
 using System.Text.Json;
 using System.Text.Json.Nodes;
 
-using r7r.Models;
+using Recipizer.Core.Models;
 
 namespace r7r;
 

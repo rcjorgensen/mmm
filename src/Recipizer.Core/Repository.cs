@@ -1,18 +1,18 @@
-using System.Data.SQLite;
+﻿using System.Data.SQLite;
 
 using Dapper;
 
-using r7r.Models;
+using Recipizer.Core.Models;
 
-namespace r7r;
+namespace Recipizer.Core;
 
-internal sealed class Repository : IRepository
+public sealed class Repository : IRepository
 {
     private readonly SQLiteConnection _connection;
 
     public Repository(SQLiteConnection connection)
     {
-        this._connection = connection;
+        _connection = connection;
     }
 
     public Task<int> InitializeSchema()

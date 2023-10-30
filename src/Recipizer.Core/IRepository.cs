@@ -1,8 +1,8 @@
-using r7r.Models;
+using Recipizer.Core.Models;
 
-namespace r7r;
+namespace Recipizer.Core;
 
-internal interface IRepository
+public interface IRepository
 {
     Task<int> InitializeSchema();
     Task<long> CreateRecipeSource(string name);

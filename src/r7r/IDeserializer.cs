@@ -1,4 +1,4 @@
-using r7r.Models;
+using Recipizer.Core.Models;
 
 namespace r7r;
 

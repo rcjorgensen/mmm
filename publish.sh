@@ -2,4 +2,4 @@
 
 set -xe
 
-dotnet publish -c release -r ubuntu.22.04-x64 --self-contained
+dotnet publish src/r7r -c release --self-contained

@@ -1,0 +1,56 @@
+@page
+@model RecipesModel
+@{
+    ViewData["Title"] = "Recipes";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Recipes</h1>
+</div>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Id</th>
+            <th>Name</th>
+            <th>Details</th>
+            <th>Ingredients</th>
+        </tr>
+    </thead>
+    <tbody>
+        @if (Model.Recipes != null)
+        {
+            foreach (var recipe in Model.Recipes)
+            {
+                <tr>
+                    <td>@recipe.RecipeId</td>
+                    <td>@recipe.Name</td>
+                    <td>@recipe.Details</td>
+                    <td>
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th>Id</th>
+                                    <th>Name</th>
+                                    <th>Added</th>
+                                    <th>Labels</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                @foreach (var ingredient in recipe.AllIngredients)
+                                {
+                                    <tr>
+                                        <td>@ingredient.IngredientId</td>
+                                        <td>@ingredient.Name</td>
+                                        <td>@ingredient.Added</td>
+                                        <td>@ingredient.JoinedLabels</td>
+                                    </tr>
+                                }
+                            </tbody>
+                        </table>
+                    </td>
+                </tr>
+            }
+        }
+    </tbody>
+</table>
