@@ -122,8 +122,9 @@ internal sealed class Serializer : ISerializer
         var nameHeader = "Name";
         var addedHeader = "Added";
         var labelsHeader = "Labels";
+        var recipeCountHeader = "No. of recipes";
 
-        var columnInnerWidths = new int[4];
+        var columnInnerWidths = new int[5];
 
         // MaxBy should never return null here
         columnInnerWidths[0] = Math.Max(
@@ -146,10 +147,15 @@ internal sealed class Serializer : ISerializer
             ingredients.Select(x => x.JoinedLabels).MaxBy(i => i.Length)?.Length ?? 0
         );
 
+        columnInnerWidths[4] = Math.Max(
+            recipeCountHeader.Length,
+            ingredients.Select(x => x.RecipeCount).MaxBy(i => i.Length)?.Length ?? 0
+        );
+
         var tb = new TableBuilder(columnInnerWidths);
         tb.AppendTop();
 
-        tb.AppendRow(idHeader, nameHeader, addedHeader, labelsHeader);
+        tb.AppendRow(idHeader, nameHeader, addedHeader, labelsHeader, recipeCountHeader);
 
         tb.AppendSeparator();
 
@@ -157,7 +163,13 @@ internal sealed class Serializer : ISerializer
         {
             var ingredientId = ingredient.IngredientId.ToString();
 
-            tb.AppendRow(ingredientId, ingredient.Name, ingredient.Added, ingredient.JoinedLabels);
+            tb.AppendRow(
+                ingredientId,
+                ingredient.Name,
+                ingredient.Added,
+                ingredient.JoinedLabels,
+                ingredient.RecipeCount
+            );
         }
 
         tb.AppendBottom();

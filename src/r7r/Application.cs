@@ -1,3 +1,4 @@
+using r7r.Models;
 using r7r.Options;
 
 namespace r7r;
@@ -186,7 +187,9 @@ internal sealed class Application : IApplication
             return validationError;
         }
 
-        var ingredients = await _repository.GetIngredients(options.Name, options.Label);
+        IEnumerable<IngredientListModel> ingredients = (
+            await _repository.GetIngredients(options.Name, options.Label)
+        ).OrderByDescending(x => x.Recipes.Count);
 
         if (options.Take != null)
         {
@@ -205,7 +208,9 @@ internal sealed class Application : IApplication
             return validationError;
         }
 
-        var ingredients = await _repository.GetInventory(options.Name, options.Label);
+        IEnumerable<IngredientListModel> ingredients = (
+            await _repository.GetInventory(options.Name, options.Label)
+        ).OrderByDescending(x => x.Recipes.Count);
 
         if (options.Take != null)
         {
@@ -224,7 +229,9 @@ internal sealed class Application : IApplication
             return validationError;
         }
 
-        var ingredients = await _repository.GetMissing(options.Name, options.Label);
+        IEnumerable<IngredientListModel> ingredients = (
+            await _repository.GetMissing(options.Name, options.Label)
+        ).OrderByDescending(x => x.Recipes.Count);
 
         if (options.Take != null)
         {

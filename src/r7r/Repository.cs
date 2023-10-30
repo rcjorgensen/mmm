@@ -311,6 +311,7 @@ internal sealed class Repository : IRepository
             from x in await _connection.QueryAsync<
                 IngredientListModel,
                 string?,
+                RecipeListModel,
                 IngredientListModel
             >(
                 """
@@ -318,8 +319,13 @@ internal sealed class Repository : IRepository
                     i.ingredient_id,
                     i.name,
                     ii.added,
-                    l.label
+                    l.label,
+                    r.recipe_id,
+                    r.name,
+                    r.details
                 FROM ingredient i
+                JOIN recipe_ingredient ri ON i.ingredient_id = ri.ingredient_id
+                JOIN recipe r ON ri.recipe_id = r.recipe_id
                 LEFT JOIN inventory_ingredient ii ON i.ingredient_id = ii.ingredient_id
                 LEFT JOIN ingredient_label il ON i.ingredient_id = il.ingredient_id
                 LEFT JOIN label l ON il.label_id = l.label_id
@@ -329,23 +335,29 @@ internal sealed class Repository : IRepository
                     (@label IS NULL OR EXISTS (SELECT * FROM ingredient_label il JOIN label l ON il.label_id = l.label_id WHERE il.ingredient_id = i.ingredient_id AND l.label = @label))
                 ORDER BY ii.added, i.ingredient_id
                 """,
-                (ingredient, label) =>
+                (ingredient, label, recipe) =>
                 {
                     if (!string.IsNullOrWhiteSpace(label))
                     {
                         ingredient.Labels.Add(label);
                     }
+
+                    ingredient.Recipes.Add(recipe);
                     return ingredient;
                 },
                 new { name, label },
-                splitOn: "label"
+                splitOn: "label, recipe_id"
             )
             group x by x.IngredientId into g
             select g
         ).Select(g =>
         {
             var ingredient = g.First();
-            ingredient.Labels = (from x in g from l in x.Labels select l).ToList();
+
+            ingredient.Labels = (from x in g from l in x.Labels select l).Distinct().ToList();
+            ingredient.Recipes = (from x in g from r in x.Recipes select r)
+                .DistinctBy(x => x.RecipeId)
+                .ToList();
             return ingredient;
         });
     }
@@ -359,6 +371,7 @@ internal sealed class Repository : IRepository
             from x in await _connection.QueryAsync<
                 IngredientListModel,
                 string?,
+                RecipeListModel,
                 IngredientListModel
             >(
                 """
@@ -366,8 +379,13 @@ internal sealed class Repository : IRepository
                     i.ingredient_id,
                     i.name,
                     ii.added,
-                    l.label
+                    l.label,
+                    r.recipe_id,
+                    r.name,
+                    r.details
                 FROM ingredient i
+                JOIN recipe_ingredient ri ON i.ingredient_id = ri.ingredient_id
+                JOIN recipe r ON ri.recipe_id = r.recipe_id
                 JOIN inventory_ingredient ii ON i.ingredient_id = ii.ingredient_id
                 LEFT JOIN ingredient_label il ON i.ingredient_id = il.ingredient_id
                 LEFT JOIN label l ON il.label_id = l.label_id
@@ -377,23 +395,29 @@ internal sealed class Repository : IRepository
                     (@label IS NULL OR EXISTS (SELECT * FROM ingredient_label il JOIN label l ON il.label_id = l.label_id WHERE il.ingredient_id = i.ingredient_id AND l.label = @label))
                 ORDER BY ii.added, i.ingredient_id
                 """,
-                (ingredient, label) =>
+                (ingredient, label, recipe) =>
                 {
                     if (!string.IsNullOrWhiteSpace(label))
                     {
                         ingredient.Labels.Add(label);
                     }
+
+                    ingredient.Recipes.Add(recipe);
+
                     return ingredient;
                 },
                 new { name, label },
-                splitOn: "label"
+                splitOn: "label, recipe_id"
             )
             group x by x.IngredientId into g
             select g
         ).Select(g =>
         {
             var ingredient = g.First();
-            ingredient.Labels = (from x in g from l in x.Labels select l).ToList();
+            ingredient.Labels = (from x in g from l in x.Labels select l).Distinct().ToList();
+            ingredient.Recipes = (from x in g from r in x.Recipes select r)
+                .DistinctBy(x => x.RecipeId)
+                .ToList();
             return ingredient;
         });
     }
@@ -407,14 +431,20 @@ internal sealed class Repository : IRepository
             from x in await _connection.QueryAsync<
                 IngredientListModel,
                 string?,
+                RecipeListModel,
                 IngredientListModel
             >(
                 """
                 SELECT
                     i.ingredient_id,
                     i.name,
-                    l.label
+                    l.label,
+                    r.recipe_id,
+                    r.name,
+                    r.details
                 FROM ingredient i
+                JOIN recipe_ingredient ri ON i.ingredient_id = ri.ingredient_id
+                JOIN recipe r ON ri.recipe_id = r.recipe_id
                 LEFT JOIN ingredient_label il ON i.ingredient_id = il.ingredient_id
                 LEFT JOIN label l ON il.label_id = l.label_id
                 WHERE 
@@ -425,23 +455,29 @@ internal sealed class Repository : IRepository
                     (@label IS NULL OR EXISTS (SELECT * FROM ingredient_label il JOIN label l ON il.label_id = l.label_id WHERE il.ingredient_id = i.ingredient_id AND l.label = @label))
                 ORDER BY i.ingredient_id
                 """,
-                (ingredient, label) =>
+                (ingredient, label, recipe) =>
                 {
                     if (!string.IsNullOrWhiteSpace(label))
                     {
                         ingredient.Labels.Add(label);
                     }
+
+                    ingredient.Recipes.Add(recipe);
+
                     return ingredient;
                 },
                 new { name, label },
-                splitOn: "label"
+                splitOn: "label, recipe_id"
             )
             group x by x.IngredientId into g
             select g
         ).Select(g =>
         {
             var ingredient = g.First();
-            ingredient.Labels = (from x in g from l in x.Labels select l).ToList();
+            ingredient.Labels = (from x in g from l in x.Labels select l).Distinct().ToList();
+            ingredient.Recipes = (from x in g from r in x.Recipes select r)
+                .DistinctBy(x => x.RecipeId)
+                .ToList();
             return ingredient;
         });
     }

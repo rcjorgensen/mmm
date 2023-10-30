@@ -7,4 +7,6 @@ internal sealed class IngredientListModel
     public string Added { get; set; } = string.Empty;
     public List<string> Labels { get; set; } = new List<string>();
     public string JoinedLabels => string.Join(", ", Labels);
+    public List<RecipeListModel> Recipes { get; set; } = new List<RecipeListModel>();
+    public string RecipeCount => Recipes.Count.ToString();
 }
